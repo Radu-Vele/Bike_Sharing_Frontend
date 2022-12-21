@@ -28,6 +28,46 @@
   color: #61dafb;
 }
 
+.label{
+  display: block;
+  font-size: larger;
+  color: black;
+  padding: 5px;
+}
+ 
+.input{
+  font-size: larger;
+  padding: 5px;
+  margin: 2px;
+  
+}
+.btn{
+  color: white;
+  background-color: gray;
+  border-radius: 5px;
+  font-size: larger;
+  display: block;
+  padding: 5px;
+  margin: 10px auto;
+}
+ 
+.messages{
+  display: flex;
+  justify-content: center;
+}
+ 
+.error{
+  display: block;
+  color: red;
+  width: fit-content;
+}
+ 
+.success{
+  display: block;
+  color: black;
+  width: fit-content;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -1,7 +1,7 @@
 import './App.css';
 import testApi from './api/TestApi';
 import React, {useState} from "react"
-import registerUser from './api/RegisterUser';
+import Form from "./Form"
 
 function App() {
   const [message, setMessage] = useState("");
@@ -11,19 +11,10 @@ function App() {
     setMessage(response)
   }
 
-  const handleRegistration = async() => {
-    const response = await registerUser()
-    console.log(response)
-  }
-
   return (
     <div className="App">
-      <header>
-        Bike System Main Page
-      </header>
-      <button onClick={handleRegistration}>
-        Register user with Hardcoded Data
-      </button>
+      <Form />
+      <a href='http://localhost:8081/login'>Sign in</a>
     </div>
   );
 }

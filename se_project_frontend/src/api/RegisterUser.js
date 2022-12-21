@@ -1,11 +1,7 @@
 import axios from "axios"
 const REGISTER_URL = "http://localhost:8081/api/v1/registration"
 
-export default async() => {
-    const userName = "react Boss"
-    const legalName = "Random Boi"
-    const email = "rr@bbb.ie"
-    const password = "parola"
+export default async(userName, legalName, email, password) => {
 
     try {
         const response = await axios.post(REGISTER_URL, {
