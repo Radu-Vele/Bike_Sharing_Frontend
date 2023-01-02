@@ -6,6 +6,8 @@ import Home from "./components/root/home/Home";
 import SignUp from "./components/root/users/signUp/SignUp";
 import Login from "./components/root/users/login/Login";
 import ProtectedRouteGuest from "./components/protectedRoutes/ProtectedRouteGuest";
+import ProtectedRouteUser from "./components/protectedRoutes/ProtectedRouteUser";
+import AccountUser from "./components/root/users/accountUser/AccountUser";
 
 import React, {useState} from "react"
 
@@ -22,6 +24,10 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
           </Route>
+
+          <Route element={<ProtectedRouteUser />}>
+            <Route path="account-user" element={<AccountUser />} />
+          </Route> 
         </Routes>
       </div>
     </Router>
