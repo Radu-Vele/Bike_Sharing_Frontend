@@ -11,17 +11,13 @@ import LoadingDotsDark from "../login/animation/LoadingDotsDark";
 const SignUp = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [checked, setCheckBoxChecked] = useState("other");
   const [error, setError] = useState(false);
   const [info, setInfo] = useState({
     username: "",
-    //fields not used 
-    fullName: "",
-    gender: "OTHER",
-    //used
+    legalName: "",
+    phoneNumber: "",
     email: "",
     password: "",
-    //not used
     repeatpassword: "",
   });
 
@@ -36,10 +32,10 @@ const SignUp = () => {
       errors.username = "Minimum 5 char";
     }
 
-    if (!info.fullName) {
-      errors.fullName = "Required";
-    } else if (info.fullName.length < 2 || info.fullName.length > 20) {
-      errors.fullName = "2 to 20 char";
+    if (!info.legalName) {
+      errors.legalName = "Required";
+    } else if (info.legalName.length < 2 || info.legalName.length > 20) {
+      errors.legalName = "2 to 20 char";
     }
 
     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(info.email)) {
@@ -54,6 +50,12 @@ const SignUp = () => {
     }
     if (info.password !== info.repeatpassword) {
       errors.repeatpassword = "Passwords don't match";
+    }
+    
+    if(!info.phoneNumber) {
+      errors.phoneNumber = "Required";
+    } else if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(info.phoneNumber)) {
+      errors.phoneNumber = "Invalid phone number";
     }
 
     return errors;
@@ -110,55 +112,31 @@ const SignUp = () => {
 
           <section className={styles.form_field}>
             <input
-              id="fullName"
+              id="legalName"
               type="text"
-              name="fullName"
-              onChange={(e) => setInfo({ ...info, fullName: e.target.value })}
+              name="legalName"
+              onChange={(e) => setInfo({ ...info, legalName: e.target.value })}
             />
-            <label htmlFor="fullName" className={styles.label_name}>
+            <label htmlFor="legalName" className={styles.label_name}>
               <span className={styles.content_name}>Full Name</span>
-              {errors.fullName && (
-                <small className={styles.errors}>{errors.fullName}</small>
+              {errors.legalName && (
+                <small className={styles.errors}>{errors.legalName}</small>
               )}
             </label>
           </section>
 
           <section className={styles.form_field}>
-            <label id="gender" className={styles.label_name}>
-              <span className={styles.content_name}>Gender</span>
-            </label>
-          </section>
-
-          <section className={styles.checkbox_choice_section}>
             <input
-              onClick={() => setCheckBoxChecked("male")}
-              onChange={(e) => setInfo({ ...info, gender: "MALE" })}
-              checked={checked === "male"}
-              type="checkbox"
-              id="checkbox1"
+              id="phoneNumber"
+              type="text"
+              name="phoneNumber"
+              onChange={(e) => setInfo({ ...info, phoneNumber: e.target.value })}
             />
-            <label className={styles.checkbox} htmlFor="checkbox1">
-              Male
-            </label>
-            <input
-              onClick={() => setCheckBoxChecked("female")}
-              onChange={(e) => setInfo({ ...info, gender: "FEMALE" })}
-              checked={checked === "female"}
-              type="checkbox"
-              id="checkbox2"
-            />
-            <label className={styles.checkbox} htmlFor="checkbox2">
-              Female
-            </label>
-            <input
-              onClick={() => setCheckBoxChecked("other")}
-              onChange={(e) => setInfo({ ...info, gender: "OTHER" })}
-              checked={checked === "other"}
-              type="checkbox"
-              id="checkbox3"
-            />
-            <label className={styles.checkbox} htmlFor="checkbox3">
-              I'd prefer not to check
+            <label htmlFor="phoneNumber" className={styles.label_name}>
+              <span className={styles.content_name}>Phone Number</span>
+              {errors.phoneNumber && (
+                <small className={styles.errors}>{errors.phoneNumber}</small>
+              )}
             </label>
           </section>
 
