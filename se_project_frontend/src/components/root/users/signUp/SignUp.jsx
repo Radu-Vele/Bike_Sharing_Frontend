@@ -64,6 +64,7 @@ const SignUp = () => {
   const submitHandler = async (event) => {
     event.preventDefault();
     let errors = validate(info);
+    
     setErrors(errors);
 
     if (Object.keys(errors).length === 0) {
