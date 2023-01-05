@@ -37,11 +37,17 @@
 
 /* add-crt-edit */
 .account_btn {
-  color: rgb(255, 177, 33);
-  left: 2px;
-  border-bottom: 1px solid rgb(177, 177, 177);
-  margin-right: 50px;
-  text-align: center;
+  padding: 10px 30px;
+  font-size: 24px;
+  cursor: pointer;
+  background-color: #6ea3ff;
+  color: #000000;
+  border-color: #fefefe;
+}
+
+.account_btn:hover {
+  background-color:#002ead;
+  transition: 0.7s;
 }
 
 .account_content p {

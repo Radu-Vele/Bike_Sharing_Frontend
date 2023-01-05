@@ -1,12 +1,11 @@
 import React from "react";
-import AuthenticationService from "../../../../api/authentication/AuthenticationService"
 import UserDetailsService from "../../../../api/users/UserDetailsService";
 import { useState, useLayoutEffect } from "react";
 import styles from "../../../../css/Account.module.css";
 import Collapsible from "react-collapsible";
-import UserAccountDeleteService from "../../../../api/users/DeleteAccountService.js"
-import { confirmAlert } from "react-confirm-alert";
 import EditAccount from "./EditAccount"
+import DeletePopUp from "../../fragments/popUps/DeleteAccountPopUp";
+import { Button } from "@mui/material";
 
 const AccountUser = () => {
 
@@ -33,29 +32,6 @@ const AccountUser = () => {
         setRides("See rides")
         return "See rides"
     }    
-
-    const deleteHandler = async (event) => {
-        event.preventDefault();
-        console.log("got here")
-        confirmAlert({
-          title: "Delete Profile",
-          message: "Are you sure you want to delete your profile?",
-          buttons: [
-            {
-              label: "Yes",
-              onClick: async () => {
-                const response = await UserAccountDeleteService();
-                if (response.data !== null) {
-                  AuthenticationService.logout();
-                }
-              },
-            },
-            {
-              label: "No",
-            },
-          ],
-        });
-    }
 
     const handleToggleEditView = async () => {
             setEditViewOff(!editViewOff);
@@ -90,18 +66,15 @@ const AccountUser = () => {
                         </div>
                         <hr className={styles.account_hr}></hr>
                         <br></br>
-                        <button onClick={handleToggleEditView}>
-                            Toggle Edit Account
-                        </button>
+                        <Button variant="outlined" onClick={handleToggleEditView}>
+                          Toggle Edit Account
+                        </Button>
                         <div hidden = {editViewOff}>
                             <EditAccount/>
                         </div>
                         <br></br>
                         <br></br>
-                        <button onClick={deleteHandler}>
-                            Delete Account
-                        </button>
-                        
+                        <DeletePopUp />
                         </div>
                 </section>
             </main>

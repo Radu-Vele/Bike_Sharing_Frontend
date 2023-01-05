@@ -7,37 +7,17 @@ import { NavLink } from "react-router-dom";
 
 const Logo = () => {
   const isUserLoggedIn = AuthenticationService.isUserLoggedIn();
-  const isBusinessLoggedIn = AuthenticationService.isBusinessLoggedIn();
   const navigate = useNavigate();
 
   return (
     <section className={styles.logo_container}>
-      {!isBusinessLoggedIn && !isUserLoggedIn && (
+      {!isUserLoggedIn && (
         <NavLink onClick={() => navigate("/")} to="/" className="">
           <img className={styles.imgHeader} src={logo} alt="logo" />
         </NavLink>
       )}
-      {!isBusinessLoggedIn && !isUserLoggedIn && (
+      {!isUserLoggedIn && (
         <NavLink onClick={() => navigate("/")} to="/" className="">
-          <h4 className={styles.logo}>Cluj Bike Sharing</h4>
-        </NavLink>
-      )}
-
-      {isBusinessLoggedIn && (
-        <NavLink
-          onClick={() => navigate("/business-home")}
-          to="/business-home"
-          className=""
-        >
-          <img className={styles.imgHeader} src={logo} alt="logo" />
-        </NavLink>
-      )}
-      {isBusinessLoggedIn && (
-        <NavLink
-          onClick={() => navigate("/business-home")}
-          to="/business-home"
-          className=""
-        >
           <h4 className={styles.logo}>Cluj Bike Sharing</h4>
         </NavLink>
       )}
