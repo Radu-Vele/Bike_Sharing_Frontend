@@ -30,10 +30,10 @@ const Menu = () => {
               <NavLink to="/user-home">Home</NavLink>
             </li>
             <li className={styles.nav_link}>
-              <NavLink to="/test">Pick-up a bike</NavLink>
+              <NavLink to="/bike-pickup">Pick-up a bike</NavLink>
             </li>
             <li className={styles.nav_link}>
-              <NavLink to="/my-hobbies" className="nav-link">
+              <NavLink to="/bike-leave" className="nav-link">
                 Leave a bike
               </NavLink>
             </li>
