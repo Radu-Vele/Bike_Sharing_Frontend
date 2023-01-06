@@ -1,11 +1,11 @@
 .blueImg {
   position: absolute;
   bottom: 0px;
-  height: 60%;
+  height: 100%;
   color: #494969;
   z-index: -2;
-  opacity: 0.1;
-  width: 70%;
+  opacity: 0.7;
+  width: 100%;
 }
 
 .blueImg2 {

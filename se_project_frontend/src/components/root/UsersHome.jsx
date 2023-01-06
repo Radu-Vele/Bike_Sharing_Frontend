@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "../../css/UserHome.module.css";
+import Background from "./fragments/background/Background";
 
 const UserHome = () => {
   

@@ -4,7 +4,6 @@ import { useState } from "react";
 import styles from "../../../../css/Forms.module.css";
 import { useLocation } from "react-router-dom";
 import LoadingDotsDark from "../login/animation/LoadingDotsDark";
-import Background from "../../fragments/background/Background";
 import EditAccountService from "../../../../api/users/EditAccountService";
 
 const EditAccount = () => {
@@ -56,7 +55,7 @@ const EditAccount = () => {
   
     return (
       <>
-        <main className={styles.form_style}>
+        <main>
           <h2>Edit account</h2>
             <form id="userInfo" onSubmit={submitHandler}>
 
@@ -105,9 +104,7 @@ const EditAccount = () => {
         
         </main>
         
-        <Background />
-    </>
-    
+      </>
     );
   };
 

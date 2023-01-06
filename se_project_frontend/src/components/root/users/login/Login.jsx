@@ -1,20 +1,24 @@
 import React from "react";
 import Footer from "../../fragments/footer/Footer";
-import Background from "../../fragments/background/Background";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthenticationService from "../../../../api/authentication/AuthenticationService";
 import LoginService from "../../../../api/login/LoginService";
-import styles from "../../../../css/Forms.module.css";
 import style from "../../../../css/Footer.module.css";
-import { Link } from "react-router-dom";
 import AuthenticateUserDataService from "../../../../api/authentication/AuthenticateUserDataService";
-import LoadingDotsDark from "./animation/LoadingDotsDark";
+import { TextField } from "@mui/material"
+import { Container } from "@mui/system";
+import { Box } from "@mui/system"
+import { Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab"
+import { ThemeProvider } from "styled-components";
+import { CssBaseline } from "@mui/material";
+import myTheme from "../../../../theme/AppTheme";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const [credentials, setCredentials] = useState({
     username: "",
@@ -31,24 +35,29 @@ const Login = () => {
 
     if (!credentials.username) {
       errors.username = "Username required";
+      errors.user_err = true; 
     } else if (credentials.username.length < 4) {
       errors.username = "Minimum 4 characters";
+      errors.user_err = true; 
     }
 
     if (!credentials.password) {
       errors.password = "A password is required";
+      errors.pass_err = true; 
     }
-
     return errors;
   };
 
-  const loginClicked = async (event) => {
+  const handleSubmit = async (event) => {
+    
     event.preventDefault();
     let errors = validate(credentials);
     setErrors(errors);
     console.log(errors);
+
     if (Object.keys(errors).length === 0) {
       setLoading(true);
+      
       const res = await AuthenticateUserDataService(
         credentials.username,
         credentials.password
@@ -62,12 +71,17 @@ const Login = () => {
           ...prevState,
           showSuccessMessage: false,
         }));
-      } else {
+      } 
+
+      else {
         let jwtToken = res.data.jwtToken;
         const token = `Bearer ${jwtToken}`;
+        
         AuthenticationService.setUpToken(token);
+        
         const response = await LoginService(credentials.username, jwtToken);
         console.log(response);
+        
         if (response.status !== 200) {
           setLoading(false);
           setLoginState((prevState) => ({
@@ -83,90 +97,66 @@ const Login = () => {
             credentials.username
           );
           navigate("/user-home");
-        } else if (response.data === "BUSINESS_USER") {
-          AuthenticationService.registerSuccessfulLoginBusiness(
-            credentials.username
-          );
-          navigate("/business-home");
         }
       }
     }
   };
 
   return (
-    <>
-      <main>
-        <form className={styles.form_style}>
-          <div className={styles.loginh1}>
-            <h1>Login</h1>
-          </div>
-          <div className={styles.login}>
-            {loginState.hasLoginFailed && (
-              <div className={styles.midErrors}> Invalid credentials</div>
-            )}
-            {loginState.showSuccessMessage && (
-              <div className={styles.midErrors}>Login successful</div>
-            )}
-          </div>
+    <Container component="main" maxWidth="xs">
+      <Typography component="h1" variant="h5">
+          Log in
+      </Typography >
 
-          <div className={styles.form_field}>
-            <input
-              id="username"
-              type="text"
-              name="username"
-              onChange={(e) =>
-                setCredentials({ ...credentials, username: e.target.value })
-              }
-              required
-            />
-            <label htmlFor="username" className={styles.label_name}>
-              {Object.keys(errors).length === 0 && (
-                <span className={styles.content_name}>Username</span>
-              )}
-              {errors.username && (
-                <small className={styles.errors}>{errors.username}</small>
-              )}
-            </label>
-          </div>
+      <Typography hidden={!loginState.hasLoginFailed} color="red">
+        Invalid credentials
+      </Typography >
 
-          <div className={styles.form_field}>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={(e) =>
-                setCredentials({ ...credentials, password: e.target.value })
-              }
-              required
-            />
-            <label htmlFor="password" className={styles.label_name}>
-              {Object.keys(errors).length === 0 && (
-                <span className={styles.content_name}>Password</span>
-              )}
-              {errors.password && (
-                <small className={styles.errors}>Password required</small>
-              )}
-            </label>
-          </div>
-          <p>
-            <Link
-              to="/change-password"
-              className={styles.button_password_forgot}
-            >
-              Forgot your password?
-            </Link>
-          </p>
-          {loading && <LoadingDotsDark className={styles.dots} />}  
-          {!loading && (
-            <button className={styles.button} onClick={loginClicked}>
-              Login
-            </button>
-          )}
-        </form>
-      </main>
+      <Typography hidden={!loginState.showSuccessMessage} color="red">
+        Login successful
+      </Typography >
+
+      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            onChange= { (e) => setCredentials({ ...credentials, username: e.target.value })}
+            autoFocus
+            error = {errors.user_err}
+            helperText={errors.username}
+          />
+        <TextField
+            margin="normal"s
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={ (e) => setCredentials({ ...credentials, password: e.target.value })}
+            error = {errors.pass_err}
+            helperText={errors.password}
+          />
+
+        <LoadingButton
+            color="primary"
+            loading={ loading }
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+        </LoadingButton>
+      </Box>             
       <Footer class={style.footer_cover} />
-      <Background />
-    </>
+    </Container>
   );
 };
 

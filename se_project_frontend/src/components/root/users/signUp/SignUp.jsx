@@ -204,7 +204,6 @@ const SignUp = () => {
         </form>
       </main>
       <Footer class={style.footer} />
-      <Background />
     </>
   );
 };

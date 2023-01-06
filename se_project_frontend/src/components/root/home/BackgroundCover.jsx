@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../../../css/Background.module.css";
-import blueImg from "../../../img/blueImg.png";
+import blueImg from "../../../img/blueImg.jpg";
 
 const BackgroundCover = () => {
   return (

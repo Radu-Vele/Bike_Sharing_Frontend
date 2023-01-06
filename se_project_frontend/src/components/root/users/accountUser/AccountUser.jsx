@@ -12,6 +12,11 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+import Background from "../../fragments/background/Background";
+import { Container } from "@mui/system";
+import { Paper } from '@mui/material';
+import Box from '@mui/material/Box';
+
 
 const AccountUser = () => {
 
@@ -44,73 +49,66 @@ const AccountUser = () => {
     }
 
     return (
-        <>
-            <main >
-                <section className={styles.account_content}>
-                    <div>
-                        <span className={styles.account_title}>
-                            <b>Account info</b>
-                        </span>
-                        <hr className={styles.account_hr}></hr>
-                        <br></br>
-                        <p> Username: {user.username} </p>
-                        <p> Email: {user.email}</p>
-                        <p> Full Name: {user.legalName} </p>
-                        <p> Phone Number: {user.phoneNumber} </p>
-                        <br></br>
-                    </div>
-                </section>
-                
-                <section className = {styles.account_content}>
-                <span className={styles.account_title}>
-                            <b>Rides</b>
-                 </span>
-                 <hr className={styles.account_hr}></hr>
+        <Box>
 
-                <tbody>
-                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                    <TableCell>
-                        <IconButton
-                            aria-label="expand row"
-                            size="small"
-                            onClick={() => setRidesOpen(!ridesOpen)}
-                        >
-                            {ridesOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                        </IconButton>
-                    </TableCell>
-                        
-                    <TableCell align="left">
-                        See all your rides (click to unfold)
-                    </TableCell>               
-                </TableRow>
+        
 
-                <Collapse in={ridesOpen} timeout="auto" unmountOnExit>
-                        <BasicTable />
-                </Collapse>
-
-                </tbody>
-                </section>
-
-                <section className = {styles.account_content}>
+            <Container  maxWidth="m">
+                <div>
                     <span className={styles.account_title}>
-                                <b>Actions</b>
+                        <b>Account info</b>
                     </span>
                     <hr className={styles.account_hr}></hr>
-                    <div>
-                        <br></br>
-                        <Button variant="outlined" onClick={handleToggleEditView}>
-                          Toggle Edit Account
-                        </Button>
-                        <div hidden = {editViewOff}>
-                            <EditAccount/>
-                        </div>
-                        <br></br>
-                        <br></br>
-                        <DeletePopUp />
-                        </div>
-                </section>
-            </main>
-        </>
+                    <br></br>
+                    <p> Username: {user.username} </p>
+                    <p> Email: {user.email}</p>
+                    <p> Full Name: {user.legalName} </p>
+                    <p> Phone Number: {user.phoneNumber} </p>
+                    <br></br>
+                </div>
+                
+
+            <span className={styles.account_title}>
+                        <b>Rides</b>
+            </span>
+            <hr className={styles.account_hr}></hr>
+
+            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableCell>
+                    <IconButton
+                        aria-label="expand row"
+                        size="small"
+                        onClick={() => setRidesOpen(!ridesOpen)}
+                    >
+                        {ridesOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
+                    
+                <TableCell align="left">
+                    See all your rides (click to unfold)
+                </TableCell>               
+            </TableRow>
+
+            <Collapse in={ridesOpen} timeout="auto" unmountOnExit>
+                    <BasicTable />
+            </Collapse>
+            <br></br>
+            <span className={styles.account_title}>
+                                <b>Actions</b>
+            </span>
+            <hr className={styles.account_hr}></hr>
+            <br></br>
+            <Button variant="outlined" onClick={handleToggleEditView}>
+                Toggle Edit Account
+            </Button>
+            <div hidden = {editViewOff}>
+                <EditAccount/>
+            </div>
+            <br></br>
+            <br></br>
+            <DeletePopUp />
+            </Container>
+        </Box>
     )
 }
 
