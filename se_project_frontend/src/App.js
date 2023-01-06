@@ -22,6 +22,8 @@ function App() {
           <ThemeProvider theme = {myTheme}> {/** Theme inherited in all sub-pages */}
           <CssBaseline /> 
             <Header />
+            <br></br>
+            <br></br>
             <Routes>
               <Route element={<ProtectedRouteGuest />}>
                   <Route path="/" element={<Home />} />

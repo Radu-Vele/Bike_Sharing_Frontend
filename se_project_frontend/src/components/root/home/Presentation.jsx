@@ -6,6 +6,8 @@ const Presentation = () => {
   return (
     <Box component="main" 
       maxWidth="xs"
+      height="100%"
+      width= "50%"
       sx={{
         bgcolor: '#fefefe',
         opacity: [0.9, 0.8, 0.9]

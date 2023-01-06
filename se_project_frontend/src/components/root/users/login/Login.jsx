@@ -1,10 +1,8 @@
 import React from "react";
-import Footer from "../../fragments/footer/Footer";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthenticationService from "../../../../api/authentication/AuthenticationService";
 import LoginService from "../../../../api/login/LoginService";
-import style from "../../../../css/Footer.module.css";
 import AuthenticateUserDataService from "../../../../api/authentication/AuthenticateUserDataService";
 import { TextField } from "@mui/material"
 import { Container } from "@mui/system";
@@ -152,7 +150,6 @@ const Login = () => {
             Sign In
         </LoadingButton>
       </Box>             
-      <Footer class={style.footer_cover} />
     </Container>
   );
 };

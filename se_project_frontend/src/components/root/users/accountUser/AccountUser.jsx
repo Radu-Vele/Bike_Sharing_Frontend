@@ -95,7 +95,7 @@ const AccountUser = () => {
             </Box>
             <br></br>
             <Typography variant="h4">
-                Rides
+                Ride History
             </Typography>
             
             <Divider />

@@ -1,17 +1,17 @@
 import React from "react";
 import styles from "../../css/UserHome.module.css";
 import Background from "./fragments/background/Background";
+import { Box, Typography } from "@mui/material"
 
 const UserHome = () => {
   
   return (
-    <>
-      <main className={styles.home_page}>
-        <div className = {styles.welcome_text}>
-          <p>Hello and welcome to the Bike Sharing App Home Page</p>
-        </div>
-      </main>
-    </>
+    <Box>
+      <Typography variant = "h5" align="center">
+        Hello and welcome to the Bike Sharing App Home Page
+      </Typography>
+
+    </Box>
   );
 };
 

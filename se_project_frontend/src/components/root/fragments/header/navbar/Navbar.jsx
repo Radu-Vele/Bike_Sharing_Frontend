@@ -6,7 +6,6 @@ import NavLinks from "../navbar/navLinks/NavLinks";
 const Navbar = () => {
   return (
     <nav className={styles.navbar}>
-      <Menu />
       <NavLinks />
     </nav>
   );

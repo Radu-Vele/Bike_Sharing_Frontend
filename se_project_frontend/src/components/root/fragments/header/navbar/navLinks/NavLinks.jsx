@@ -12,8 +12,8 @@ const NavLinks = () => {
     <>
       {userLogged && (
         <ul className={styles.nav_links}>
-          <li className={styles.nav_link}>
-            <NavLink to="/user-home">Home</NavLink>
+          <li >
+            <NavLink to="/user-home" className={styles.nav_link} activeClassName={styles.nav_link}>Home</NavLink>
           </li>
           <li className={styles.nav_link}>
             <NavLink to="/bike-pickup">Pick up a bike</NavLink>

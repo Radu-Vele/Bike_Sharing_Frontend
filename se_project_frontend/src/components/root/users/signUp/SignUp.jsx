@@ -1,13 +1,14 @@
 import React from "react";
-import Footer from "../../fragments/footer/Footer";
-import Background from "../../fragments/background/Background";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignUpAppClientService from "../../../../api/signup/SignUpAppClientService";
-import styles from "../../../../css/Forms.module.css";
-import style from "../../../../css/Footer.module.css";
-import LoadingDotsDark from "../login/animation/LoadingDotsDark";
+import { TextField } from "@mui/material"
+import { Container } from "@mui/system";
+import { Box } from "@mui/system";
+import { Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
+//TODO: make it with a good font
 const SignUp = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -28,34 +29,44 @@ const SignUp = () => {
 
     if (!info.username) {
       errors.username = "Required";
+      errors.username_err = true;
+
     } else if (info.username.length < 5) {
       errors.username = "Minimum 5 char";
+      errors.username_err = true;
     }
 
     if (!info.legalName) {
       errors.legalName = "Required";
+      errors.legalName_err = true;
     } else if (info.legalName.length < 2 || info.legalName.length > 20) {
       errors.legalName = "2 to 20 char";
+      errors.legalName_err = true;
     }
 
     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(info.email)) {
       errors.email = "Invalid email address";
+      errors.email_err = true;
     }
 
     if (!info.password) {
       errors.password = "Required";
+      errors.password_err = true;
     }
     if (!info.repeatpassword) {
       errors.repeatpassword = "Repeate";
+      errors.repeatpassword_err = "Repeate";
     }
     if (info.password !== info.repeatpassword) {
       errors.repeatpassword = "Passwords don't match";
+      errors.repeatpassword_err = "Repeate";
     }
     
     if(!info.phoneNumber) {
       errors.phoneNumber = "Required";
     } else if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(info.phoneNumber)) {
       errors.phoneNumber = "Invalid phone number";
+      errors.phoneNumber_err = "Repeate";
     }
 
     return errors;
@@ -86,125 +97,110 @@ const SignUp = () => {
   };
 
   return (
-    <>
-      <main className={styles.form_style}>
-        <h2>Sign up</h2>
-        {error && (
-          <div className={styles.errors}>
-            This username or email already exist.
-          </div>
-        )}
+  <Container component="main" maxWidth="sm">
+    <Typography component="h1" variant="h5">
+          Sign up
+    </Typography >
+    <Typography hidden={!error} color="red">
+      Invalid signup
+    </Typography >
 
-        <form className={styles.signup_form} onSubmit={submitHandler}>
-          <section className={styles.form_field}>
-            <input
-              id="name"
-              onChange={(e) => setInfo({ ...info, username: e.target.value })}
-              type="text"
-              name="name"
-            />
-            <label htmlFor="name" className={styles.label_name}>
-              <span className={styles.content_name}>Username</span>
-              {errors.username && (
-                <small className={styles.errors}>{errors.username}</small>
-              )}
-            </label>
-          </section>
+    <Typography hidden={!error} color="red">
+      Signup successful
+    </Typography >
 
-          <section className={styles.form_field}>
-            <input
-              id="legalName"
-              type="text"
-              name="legalName"
-              onChange={(e) => setInfo({ ...info, legalName: e.target.value })}
-            />
-            <label htmlFor="legalName" className={styles.label_name}>
-              <span className={styles.content_name}>Full Name</span>
-              {errors.legalName && (
-                <small className={styles.errors}>{errors.legalName}</small>
-              )}
-            </label>
-          </section>
-
-          <section className={styles.form_field}>
-            <input
-              id="phoneNumber"
-              type="text"
-              name="phoneNumber"
-              onChange={(e) => setInfo({ ...info, phoneNumber: e.target.value })}
-            />
-            <label htmlFor="phoneNumber" className={styles.label_name}>
-              <span className={styles.content_name}>Phone Number</span>
-              {errors.phoneNumber && (
-                <small className={styles.errors}>{errors.phoneNumber}</small>
-              )}
-            </label>
-          </section>
-
-          <section className={styles.form_field}>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              onChange={(e) => setInfo({ ...info, email: e.target.value })}
-            />
-            <label htmlFor="email" className={styles.label_name}>
-              <span className={styles.content_name}>Email</span>
-              {errors.email && (
-                <small className={styles.errors}>{errors.email}</small>
-              )}
-            </label>
-          </section>
-
-          <section className={styles.form_field}>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              onChange={(e) => setInfo({ ...info, password: e.target.value })}
-            />
-
-            <label htmlFor="password" className={styles.label_name}>
-              <span className={styles.content_name}>Password</span>
-              {errors.password && (
-                <small className={styles.errors}>{errors.password}</small>
-              )}
-            </label>
-          </section>
-
-          <section className={styles.form_field}>
-            <input
-              id="repassword"
-              name="repassword"
-              type="password"
-              onChange={(e) =>
-                setInfo({ ...info, repeatpassword: e.target.value })
-              }
-            />
-
-            <label htmlFor="repassword" className={styles.label_name}>
-              {!errors.repeatpassword && (
-                <span className={styles.content_name}>Confirm Password</span>
-              )}
-              {errors.repeatpassword && (
-                <small className={styles.errors}>{errors.repeatpassword}</small>
-              )}
-            </label>
-          </section>
-
-          <section className={styles.form_field}>
-            {loading && <LoadingDotsDark />}
-
-            {!loading && (
-              <button id="button" type="submit" className={styles.button}>
-                Signup
-              </button>
-            )}
-          </section>
-        </form>
-      </main>
-      <Footer class={style.footer} />
-    </>
+    <Box component="form" onSubmit={submitHandler} noValidate sx={{ mt: 1 }}>
+        <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            onChange= {(e) => setInfo({ ...info, username: e.target.value })}
+            autoFocus
+            error = {errors.username_err}
+            helperText={errors.username}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="legalName"
+            label="Full name"
+            name="legalName"
+            autoComplete="legalName"
+            onChange= {(e) => setInfo({ ...info, legalName: e.target.value })}
+            autoFocus
+            error = {errors.legalName_err}
+            helperText={errors.legalName}
+          />
+        <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email address"
+            name="email"
+            autoComplete="email"
+            onChange= {(e) => setInfo({ ...info, email: e.target.value })}
+            autoFocus
+            error = {errors.email_err}
+            helperText={errors.email}
+          />
+        <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="phoneNumber"
+            label="Phone number"
+            name="phoneNumber"
+            autoComplete="phoneNumber"
+            onChange= {(e) => setInfo({ ...info, phoneNumber: e.target.value })}
+            autoFocus
+            error = {errors.phoneNumber_err}
+            helperText={errors.phoneNumber}
+          />
+        <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="repassword"
+            autoComplete="current-password"
+            onChange={(e) => setInfo({ ...info, password: e.target.value })}
+            error = {errors.password_err}
+            helperText={errors.password}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Repeate Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange= {(e) => setInfo({ ...info, repeatpassword: e.target.value })}
+            autoFocus
+            error = {errors.repeatpassword_err}
+            helperText={errors.repeatpassword}
+          />
+        <LoadingButton
+            color="primary"
+            loading={ loading }
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign Up
+        </LoadingButton>
+      </Box>             
+    </Container>
   );
 };
 

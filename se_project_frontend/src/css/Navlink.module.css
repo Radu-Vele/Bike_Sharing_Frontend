@@ -1,0 +1,11 @@
+.nav_link_default {
+    color: #ffffff;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.nav_link_active {
+    color: darkblue;
+    font-size: 18px;
+    text-decoration: none;
+}
