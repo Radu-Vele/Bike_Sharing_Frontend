@@ -19,7 +19,6 @@ function App() {
 
   return (
       <Router>
-        <div className="App">
           <ThemeProvider theme = {myTheme}> {/** Theme inherited in all sub-pages */}
           <CssBaseline /> 
             <Header />
@@ -36,7 +35,6 @@ function App() {
               </Route> 
             </Routes>
           </ThemeProvider>
-        </div>
       </Router>
   );
 }

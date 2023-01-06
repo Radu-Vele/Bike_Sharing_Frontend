@@ -8,12 +8,9 @@ import style from "../../../../css/Footer.module.css";
 import AuthenticateUserDataService from "../../../../api/authentication/AuthenticateUserDataService";
 import { TextField } from "@mui/material"
 import { Container } from "@mui/system";
-import { Box } from "@mui/system"
+import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
-import { LoadingButton } from "@mui/lab"
-import { ThemeProvider } from "styled-components";
-import { CssBaseline } from "@mui/material";
-import myTheme from "../../../../theme/AppTheme";
+import { LoadingButton } from "@mui/lab";
 
 const Login = () => {
   const navigate = useNavigate();

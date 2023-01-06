@@ -4,7 +4,7 @@ import { useState, useLayoutEffect } from "react";
 import styles from "../../../../css/Account.module.css";
 import EditAccount from "./EditAccount"
 import DeletePopUp from "../../fragments/popUps/DeleteAccountPopUp";
-import { Button } from "@mui/material";
+import { Button, Divider, ListItemText, Typography } from "@mui/material";
 import BasicTable from "../../fragments/tables/RidesTable";
 import { Collapse } from "@mui/material";
 import {IconButton} from "@mui/material";
@@ -12,11 +12,14 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import Background from "../../fragments/background/Background";
 import { Container } from "@mui/system";
-import { Paper } from '@mui/material';
 import Box from '@mui/material/Box';
-
+import { ListItem, ListItemButton, ListItemIcon } from "@mui/material";
+import InboxIcon  from '@mui/icons-material/Inbox';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import BadgeIcon from '@mui/icons-material/Badge';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
 const AccountUser = () => {
 
@@ -49,29 +52,54 @@ const AccountUser = () => {
     }
 
     return (
-        <Box>
+        <Container maxWidth="l">
+            <Typography variant="h4">
+                Account info
+            </Typography>            
+            
+            <Divider />            
+            
+            <Box>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                    <ListItemIcon>
+                        <PersonIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={user.username} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                    <ListItemIcon>
+                        <EmailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={user.email} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                    <ListItemIcon>
+                        <BadgeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={user.legalName} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                    <ListItemIcon>
+                        <LocalPhoneIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={user.phoneNumber} />
+                    </ListItemButton>
+                </ListItem>
+            </Box>
+            <br></br>
+            <Typography variant="h4">
+                Rides
+            </Typography>
+            
+            <Divider />
 
-        
-
-            <Container  maxWidth="m">
-                <div>
-                    <span className={styles.account_title}>
-                        <b>Account info</b>
-                    </span>
-                    <hr className={styles.account_hr}></hr>
-                    <br></br>
-                    <p> Username: {user.username} </p>
-                    <p> Email: {user.email}</p>
-                    <p> Full Name: {user.legalName} </p>
-                    <p> Phone Number: {user.phoneNumber} </p>
-                    <br></br>
-                </div>
-                
-
-            <span className={styles.account_title}>
-                        <b>Rides</b>
-            </span>
-            <hr className={styles.account_hr}></hr>
 
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
@@ -90,25 +118,32 @@ const AccountUser = () => {
             </TableRow>
 
             <Collapse in={ridesOpen} timeout="auto" unmountOnExit>
-                    <BasicTable />
+                <BasicTable />
             </Collapse>
             <br></br>
-            <span className={styles.account_title}>
-                                <b>Actions</b>
-            </span>
-            <hr className={styles.account_hr}></hr>
+            <Typography variant="h4">
+                Actions
+            </Typography>
+            
+            <Divider />
             <br></br>
-            <Button variant="outlined" onClick={handleToggleEditView}>
+
+            <Button variant="outlined" onClick={handleToggleEditView} >
                 Toggle Edit Account
             </Button>
-            <div hidden = {editViewOff}>
-                <EditAccount/>
-            </div>
+            
             <br></br>
+            
+            <Box hidden={editViewOff}>
+                <br></br>
+                <EditAccount currAccount={user}/>
+            </Box>
+
             <br></br>
+
             <DeletePopUp />
-            </Container>
-        </Box>
+
+        </Container>
     )
 }
 

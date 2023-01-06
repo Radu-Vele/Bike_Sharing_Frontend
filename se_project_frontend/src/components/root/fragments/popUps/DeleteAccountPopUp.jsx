@@ -29,7 +29,7 @@ export default function DeleteAccountPopUp() {
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>
-        Delete Account - Safe
+        Delete Account
       </Button>
       <Dialog
         open={open}

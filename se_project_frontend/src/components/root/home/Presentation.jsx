@@ -1,27 +1,29 @@
+import { Button, Container, Typography } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
-import styles from "../../../css/Presentation.module.css";
+import { Box } from "@mui/material";
 
 const Presentation = () => {
   return (
-    <section className={styles.presentation}>
-      <section className={styles.introduction}>
-        <article className={styles.intro_text}>
-          <h1>Ready to bike?</h1>
-          <p>
-            Navigate our website and give it a go!
-          </p>
-        </article>
-
-        <article className={styles.buttons}>
-          <button className={styles.btn_first} method="POST">
-            <Link to="signup" className={styles.btn_first}>
-              Sign up
-            </Link>
-          </button>
-        </article>
-      </section>
-    </section>
+    <Box component="main" 
+      maxWidth="xs"
+      sx={{
+        bgcolor: '#fefefe',
+        opacity: [0.9, 0.8, 0.9]
+      }}
+    >
+        <Typography variant="h4">
+          Ready to bike?
+        </Typography>
+        <Typography variant="h6">
+          Navigate our website and give it a go!
+        </Typography>
+        <Button 
+          href="signup"
+          color = "primary"
+        >
+        Sign up
+        </Button>
+    </Box>
   );
 };
 

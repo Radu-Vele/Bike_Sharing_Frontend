@@ -19,12 +19,12 @@ const NavLinks = () => {
             <NavLink to="/bike-pickup">Pick up a bike</NavLink>
           </li>
           <li className={styles.nav_link}>
-            <NavLink to="bike-leave" className="nav-link">
+            <NavLink to="/bike-leave" className="nav-link">
               Leave bike
             </NavLink>
           </li>
           <li className={styles.nav_link}>
-            <NavLink to="account-user">Account details</NavLink>
+            <NavLink to="/account-user">Account details</NavLink>
           </li>
           <li
             className={styles.nav_link}
