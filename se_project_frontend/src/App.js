@@ -12,8 +12,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import React, {useState} from "react"
 import UserHome from './components/root/UsersHome';
 import myTheme from './theme/AppTheme';
-import MyRideDrawer from './components/root/fragments/drawer/Drawer';
-
 const drawerWidth = 240;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(

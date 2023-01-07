@@ -8,14 +8,13 @@ import FinishRide from '../../system/FinishRide';
 export default function MyRideDrawer() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-
   return (
     <Container>
         <div
             align="center"
         >
             <Button
-            variant="contained" 
+            variant="outlined"
             color="success"
             onClick={() => setIsDrawerOpen(true)}>
                 My Ride
