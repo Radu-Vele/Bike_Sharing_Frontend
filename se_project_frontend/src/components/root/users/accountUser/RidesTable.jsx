@@ -28,9 +28,15 @@ export default function RidesTable() {
     return {id, s_time, s_station_id, e_time, e_station_id, bike_id};
   }
   
+  function trimDate(timestamp) {
+    let dayStr = timestamp.substring(0, 10);
+    let timeStr = timestamp.substring(11, 19);
+    return ("[" +dayStr + "] [" + timeStr + "]");
+  }
+
   function populateTable(response) {
     for(let i = 0; i < response.data.length; i++) {
-      rows.push(createData(response.data[i].id,response.data[i].startTime,response.data[i].startStationId,response.data[i].endTime,response.data[i].endStationId,response.data[i].bikeId));
+      rows.push(createData(response.data[i].id,trimDate(response.data[i].startTime),response.data[i].startStationId,trimDate(response.data[i].endTime),response.data[i].endStationId,response.data[i].bikeId));
     }
   }
 
