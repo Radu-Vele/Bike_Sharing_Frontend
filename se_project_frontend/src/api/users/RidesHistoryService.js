@@ -6,7 +6,7 @@ const RidesHistoryService = () => {
 
     //perform a get request to retrieve account information
     try{
-        return axios.get('/get-ride', {
+        return axios.get('/ride-list', {
             params: {
                 username,
             },

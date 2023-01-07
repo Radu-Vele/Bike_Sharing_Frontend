@@ -15,8 +15,7 @@ import { useState } from "react";
 import RidesHistoryService from '../../../../api/users/RidesHistoryService';
 
 export default function RidesTable() {
-  
-  const rows = [];
+  const [rows, setRows] = useState([])
 
   function createData(
     id,
@@ -26,38 +25,46 @@ export default function RidesTable() {
     e_station_id,
     bike_id
   ) {
-    return { id, s_time, s_station_id, e_time, e_station_id, bike_id};
+    return {id, s_time, s_station_id, e_time, e_station_id, bike_id};
   }
   
   function populateTable(response) {
-    rows += createData(response[0])
+    for(let i = 0; i < response.data.length; i++) {
+      rows.push(createData(response.data[i].id,response.data[i].startTime,response.data[i].startStationId,response.data[i].endTime,response.data[i].endStationId,response.data[i].bikeId));
+    }
   }
 
   
   const [ridesListPresent, setRidesListPresent] = useState(false);
   const [ridesOpen, setRidesOpen] = useState(false);
   const [error, setError] = useState(false);
-
+  
   const handleCollapseOpen = async (event) => {
     if(ridesOpen) {
-      setRidesOpen(!ridesOpen);
+      setRidesOpen(false);
     }
     else {
       if(!ridesListPresent) {
         await RidesHistoryService()
         .then((response) => {
-          if (response.status === 201) {
-            //populate table
+          if (response.status === 200) {
+            populateTable(response)
+            setError(false);
             setRidesListPresent(true);
             setRidesOpen(true);
           }
         })
         .catch((err) => {
+          console.log(err);
           setRidesOpen(false);
           setError(true);
           setRidesListPresent(false);
         });
       }
+      else {
+        setRidesOpen(true);
+      }
+      
     }
   }
 
@@ -98,17 +105,17 @@ export default function RidesTable() {
           <TableBody>
             {rows.map((row) => (
               <TableRow
-                key={row.name}
+                key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
                 <TableCell align="right">{row.s_time}</TableCell>
-                <TableCell align="right">{row.s_station}</TableCell>
+                <TableCell align="right">{row.s_station_id}</TableCell>
                 <TableCell align="right">{row.e_time}</TableCell>
-                <TableCell align="right">{row.e_station}</TableCell>
-                <TableCell align="right">{row.bike}</TableCell>
+                <TableCell align="right">{row.e_station_id}</TableCell>
+                <TableCell align="right">{row.bike_id}</TableCell>
               </TableRow>
             ))}
           </TableBody>
