@@ -13,8 +13,7 @@ import { NavLink } from "react-router-dom";
 import AuthenticationService from "../../../../api/authentication/AuthenticationService";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Link from '@mui/material/Link';
-
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Header = () => {
   const userLogged = AuthenticationService.isUserLoggedIn();
@@ -57,14 +56,7 @@ const Header = () => {
             >
               Pick up a Bike</NavLink>
           </Button>
-          <Button color="inherit">
-            <NavLink 
-            to="/bike-leave"
-            className={style_nav.nav_link_default} 
-            activeClassName={style_nav.nav_link_active}
-            >
-              Leave a Bike</NavLink>
-          </Button>
+
           <Button color="inherit">
             <NavLink 
             to="/account-user"
@@ -73,6 +65,7 @@ const Header = () => {
             >
               My Account</NavLink>
           </Button>
+
           <Button color="inherit"
             onClick={AuthenticationService.logout}
           >
@@ -80,8 +73,12 @@ const Header = () => {
             to="/"
             className={style_nav.nav_link_default} 
             activeClassName={style_nav.nav_link_active}         
-            >Logout</NavLink>
+            >
+              <LogoutIcon fontSize="small"/>
+            </NavLink>
           </Button>
+
+
         </Toolbar>
       </AppBar>
     </Box>

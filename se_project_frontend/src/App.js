@@ -1,7 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { styled, createTheme, ThemeProvider, createMuiTheme } from '@mui/material/styles';
-
+import { styled, ThemeProvider, creteMuiTheme } from '@mui/material/styles';
 import Header from "./components/root/fragments/header/Header";
 import Home from "./components/root/home/Home";
 import SignUp from "./components/root/users/signUp/SignUp";
@@ -10,10 +9,31 @@ import ProtectedRouteGuest from "./components/protectedRoutes/ProtectedRouteGues
 import ProtectedRouteUser from "./components/protectedRoutes/ProtectedRouteUser";
 import AccountUser from "./components/root/users/accountUser/AccountUser";
 import CssBaseline from '@mui/material/CssBaseline';
-
 import React, {useState} from "react"
 import UserHome from './components/root/UsersHome';
 import myTheme from './theme/AppTheme';
+import MyRideDrawer from './components/root/fragments/drawer/Drawer';
+
+const drawerWidth = 240;
+
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
+  ({ myTheme, open }) => ({
+      flexGrow: 1,
+      padding: myTheme.spacing(3),
+      transition: myTheme.transitions.create("margin", {
+        easing: myTheme.transitions.easing.sharp,
+        duration: myTheme.transitions.duration.leavingScreen
+      }),
+      marginRight: -drawerWidth,
+      ...(open && {
+        transition: myTheme.transitions.create("margin", {
+          easing: myTheme.transitions.easing.easeOut,
+          duration: myTheme.transitions.duration.enteringScreen
+        }),
+        marginRight: 0
+      })
+    })
+  );
 
 function App() {
 
@@ -32,8 +52,8 @@ function App() {
               </Route>
 
               <Route element={<ProtectedRouteUser />}>
-                <Route path="user-home" element={<UserHome />} />
-                <Route path="account-user" element={<AccountUser />} />
+                  <Route path="user-home" element={<UserHome />} />
+                  <Route path="account-user" element={<AccountUser />} />
               </Route> 
             </Routes>
           </ThemeProvider>

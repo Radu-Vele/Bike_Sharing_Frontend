@@ -1,9 +1,9 @@
 import React from "react";
 import axios from "axios";
 
-const HomeService = () => {
+const FinishRideService = (info) => {
   try {
-    return axios.get("/");
+    return axios.put("/finish-ride", info);
   } catch (err) {
     let error = "";
     if (err.response) {
@@ -13,4 +13,4 @@ const HomeService = () => {
   }
 };
 
-export default HomeService;
+export default FinishRideService;
