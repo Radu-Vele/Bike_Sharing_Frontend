@@ -1,34 +1,22 @@
 import React from "react";
 import UserDetailsService from "../../../../api/users/UserDetailsService";
 import { useState, useLayoutEffect } from "react";
-import styles from "../../../../css/Account.module.css";
 import EditAccount from "./EditAccount"
 import DeletePopUp from "../../fragments/popUps/DeleteAccountPopUp";
 import { Button, Divider, ListItemText, Typography } from "@mui/material";
-import BasicTable from "../../fragments/tables/RidesTable";
-import { Collapse } from "@mui/material";
-import {IconButton} from "@mui/material";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
+import RidesTable from "./RidesTable";
 import { Container } from "@mui/system";
 import Box from '@mui/material/Box';
 import { ListItem, ListItemButton, ListItemIcon } from "@mui/material";
-import InboxIcon  from '@mui/icons-material/Inbox';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import BadgeIcon from '@mui/icons-material/Badge';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
 const AccountUser = () => {
-
     const [user, setUser] = useState([]);
-    const [rides, setRides] = useState([]);
     const [editViewOff, setEditViewOff] = useState([]);
-    const [ridesOpen, setRidesOpen] = React.useState(false);
 
-    //retrieve details
     useLayoutEffect(() => {
       let unmounted = false;
     
@@ -37,15 +25,11 @@ const AccountUser = () => {
             setUser(response.data);
         }
       });
+
       return () => {
         unmounted = true;
       };
     }, [])    
-
-    const ridesHandler = async (event) => {
-        setRides("See rides")
-        return "See rides"
-    }    
 
     const handleToggleEditView = async () => {
             setEditViewOff(!editViewOff);
@@ -55,10 +39,8 @@ const AccountUser = () => {
         <Container maxWidth="l">
             <Typography variant="h4">
                 Account info
-            </Typography>            
-            
-            <Divider />            
-            
+            </Typography>           
+            <Divider />                
             <Box>
                 <ListItem disablePadding>
                     <ListItemButton>
@@ -97,29 +79,10 @@ const AccountUser = () => {
             <Typography variant="h4">
                 Ride History
             </Typography>
-            
             <Divider />
 
-
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setRidesOpen(!ridesOpen)}
-                    >
-                        {ridesOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
-                    
-                <TableCell align="left">
-                    See all your rides (click to unfold)
-                </TableCell>               
-            </TableRow>
-
-            <Collapse in={ridesOpen} timeout="auto" unmountOnExit>
-                <BasicTable />
-            </Collapse>
+            <RidesTable />
+            
             <br></br>
             <Typography variant="h4">
                 Actions
