@@ -11,7 +11,6 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 const StartRide = () => {
-
     // const navigate = useNavigate();
 
     // const [loadingStartStations, setLoadingStartStations] = useState(true);
@@ -21,7 +20,7 @@ const StartRide = () => {
     const [chosenBike, setChosenBike] = useState("");
     const [chosenEnd, setChosenEnd] = useState("");
 
-    var chosenStationId;
+    const [chosenStationId, setChosenStationId] = useState(0);
     var chosenEndId;
 
     const [stationData, setStationData] = useState([]);
@@ -76,7 +75,6 @@ const StartRide = () => {
                     arr.push(temp);
                 }
                 setStationData(arr);
-                console.log(stationData);
             }
         }
         catch (err) {
@@ -93,12 +91,12 @@ const StartRide = () => {
         try {
             for (const iterator of stationData) {
                 if (iterator.name === chosenStation) {
-                    chosenStationId = iterator.id;
-                    console.log(chosenStationId)
+                    setChosenStationId(iterator.id);
+                    console.log(chosenStationId);
+
                 }
             }
             const response = await axios.get("/get-usable-bikes?stationId=" + chosenStationId);
-            console.log("got here x2")
             let arr = [];
             if (response.data.length > 0) {
                 let availableUsableBikes = response.data;
@@ -107,7 +105,7 @@ const StartRide = () => {
                     arr.push(iterator.id);
                 }
                 setBikeData(arr);
-                console.log(bikeData);
+                console.log("bike arr:", bikeData);
             }
         }
         catch (err) {
@@ -135,7 +133,6 @@ const StartRide = () => {
                     arr.push(temp);
                 }
                 setEndStationData(arr);
-                console.log(endStationData);
             }
         }
         catch (err) {
@@ -149,16 +146,18 @@ const StartRide = () => {
     };
 
     const submitHandler = async (event) => {
-        info.startStationId = chosenStationId
+
+        setInfo({ ...info, startStationId: chosenStationId});
+        console.log("bike: ", chosenBike);
         for (const iterator of endStationData) {
             if (iterator.name === chosenEnd) {
                 chosenEndId = iterator.id;
                 console.log(chosenEndId)
             }
         }
+
         info.endStationId = chosenEndId
 
-        console.log("got here" + info.startStationId)
         event.preventDefault();
 
         let errors = validate(info);
@@ -178,18 +177,15 @@ const StartRide = () => {
 
     const handleChange1 = (event) => {
         setChosenStation(event.target.value);
-        console.log(event.target.value);
     }
 
     const handleChange2 = (event) => {
         setChosenBike(event.target.value);
         setInfo({ ...info, bikeId: event.target.value })
-        console.log(event.target.value);
     }
 
     const handleChange3 = (event) => {
         setChosenEnd(event.target.value);
-        console.log(event.target.value);
     }
 
 
@@ -198,7 +194,7 @@ const StartRide = () => {
     ));
 
     const menuItemsBikes = bikeData.map((item, i) => (
-        <MenuItem key={i} value={(i + 1) * 10}>{item}</MenuItem>
+        <MenuItem key={i} value={i}>{item}</MenuItem>
     ));
 
     const menuItemsEnd = endStationData.map(item => (

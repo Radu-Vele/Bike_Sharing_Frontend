@@ -4,6 +4,7 @@ import axios from "../customAxiosConfig/CustomAxiosConfig";
 const StartRideService = (info) => {
 
   try {
+    console.log(info);
     return axios.post("/init-ride", info);
   } catch (err) {
     let error = "";
