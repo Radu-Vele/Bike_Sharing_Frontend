@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import axios from "../customAxiosConfig/CustomAxiosConfig";
 
 const StartRideService = (info) => {
 
@@ -14,4 +14,4 @@ const StartRideService = (info) => {
   }
 };
 
-export default FinishRideService;
+export default StartRideService;

@@ -6,6 +6,9 @@ const myTheme = createTheme({
         primary: {
             main: blue[500]
         },
+        secondary: {
+            main: green[900]
+        },
         background: {
             default: grey[100]
         },
