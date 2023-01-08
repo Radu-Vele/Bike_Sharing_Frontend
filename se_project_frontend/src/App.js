@@ -12,7 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import React, {useState} from "react"
 import UserHome from './components/root/UsersHome';
 import myTheme from './theme/AppTheme';
-const drawerWidth = 240;
+import StartRide from './components/root/system/StartRide';
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ myTheme, open }) => ({
@@ -52,6 +52,7 @@ function App() {
               <Route element={<ProtectedRouteUser />}>
                   <Route path="user-home" element={<UserHome />} />
                   <Route path="account-user" element={<AccountUser />} />
+                  <Route path="bike-pickup" element={<StartRide />} />
               </Route> 
             </Routes>
           </ThemeProvider>
