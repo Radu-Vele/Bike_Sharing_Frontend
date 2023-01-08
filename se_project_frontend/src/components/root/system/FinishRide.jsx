@@ -31,7 +31,7 @@ const FinishRide = () => {
         return () => {
           unmounted = true;
         };
-      }, [])
+    }, [])
 
 
     useEffect( () => {
@@ -60,6 +60,7 @@ const FinishRide = () => {
           if (response.status === 201) {
             setSuccess(true);
             setOpenFbDialog(true);
+            setTempHasActiveRide(false);
           }
         })
         .catch((err) => {
@@ -103,12 +104,6 @@ const FinishRide = () => {
                 The ride was ended and saved successfully!
             </Typography>
 
-            <Dialog
-                open={openFbDialog}
-                maxWidth="lg"
-            >
-                <FeedbackForm hook={[openFbDialog, setOpenFbDialog]}/> {/* Is this even legal?*/}
-            </Dialog>
         </div>
         )}
         {!tempHasActiveRide && (
@@ -122,6 +117,14 @@ const FinishRide = () => {
             
         </div>
         )}
+        <Dialog
+                open={openFbDialog}
+                maxWidth="lg"
+            >
+                <FeedbackForm 
+                    hook={[openFbDialog, setOpenFbDialog]} 
+                /> {/* Is this even legal?*/}
+            </Dialog>
     </Box>
     );
 }

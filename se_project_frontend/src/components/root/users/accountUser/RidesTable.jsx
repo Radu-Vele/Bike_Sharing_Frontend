@@ -15,7 +15,7 @@ import { useState } from "react";
 import RidesHistoryService from '../../../../api/users/RidesHistoryService';
 
 export default function RidesTable() {
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState([]);
 
   function createData(
     id,
