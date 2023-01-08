@@ -1,13 +1,13 @@
 import React from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { Typography, Dialog } from '@mui/material';
 import { useState, useLayoutEffect } from 'react';
 import { useEffect } from 'react';
 import FinishRideService from "../../../api/system/FinishRideService";
 import UserDetailsService from "../../../api/users/UserDetailsService";
 import moment from "moment"
-import Moment from "react-moment";
+import FeedbackForm from "./FeedbackForm";
 
 const FinishRide = () => {
     const [date, setDate] = useState(new Date());
@@ -16,6 +16,7 @@ const FinishRide = () => {
     const [user, setUser] = useState();
     const [tempHasActiveRide, setTempHasActiveRide] = useState(false)
     const [rideStartTime, setRideStartTime] = useState("");
+    const [openFbDialog, setOpenFbDialog] = useState(false);
 
     useLayoutEffect(() => {
         let unmounted = false;
@@ -58,6 +59,7 @@ const FinishRide = () => {
         .then((response) => {
           if (response.status === 201) {
             setSuccess(true);
+            setOpenFbDialog(true);
           }
         })
         .catch((err) => {
@@ -100,6 +102,13 @@ const FinishRide = () => {
             <Typography hidden={!success} color="success">
                 The ride was ended and saved successfully!
             </Typography>
+
+            <Dialog
+                open={openFbDialog}
+                maxWidth="lg"
+            >
+                <FeedbackForm hook={[openFbDialog, setOpenFbDialog]}/> {/* Is this even legal?*/}
+            </Dialog>
         </div>
         )}
         {!tempHasActiveRide && (
