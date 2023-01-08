@@ -59,7 +59,6 @@ const StartRide = (ride) => {
         const availableOptions = async()  => {
             try {
                 const availableStartStations = await axios.get("/get-stations");
-                console.log(availableStartStations.data);
                 if (availableStartStations.data.length > 0) {
                     setAvailableStartStations(availableStartStations.data.map(station => ({name: station.name})));
                     setLoadingStartStations(false);
@@ -77,8 +76,7 @@ const StartRide = (ride) => {
         setLoadingUsableBikes(true);
         const availableOptions = async() => {
             try {
-                const availableUsableBikes = await axios.get("/get-usable-bikes");
-                console.log(availableUsableBikes.data);
+                const availableUsableBikes = await axios.get("/get-usable-bikes"); //TODO: add param the selected station
                 if(availableUsableBikes.data.length > 0) {
                     setAvailableUsableBikes(availableUsableBikes.data.map(bike => ({bikeId: bike.id})));
                 }
@@ -91,6 +89,8 @@ const StartRide = (ride) => {
     }, [startStations]);
 
     const submitHandler = async (event) => {
+        console.log(availableStartStations);
+        console.log(usableBikes);
         event.preventDefault();
 
         let errors = validate(info);
