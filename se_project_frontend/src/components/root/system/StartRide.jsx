@@ -1,18 +1,14 @@
 import * as React from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { useState } from 'react';
-import { useEffect } from 'react';
 import StartRideService from "../../../api/system/StartRideService";
 import AuthenticationService from "../../../api/authentication/AuthenticationService";
-import { useNavigate } from "react-router-dom";
 import axios from "../../../api/customAxiosConfig/CustomAxiosConfig";
-import { Container, Box } from "@mui/material";
+import { Container } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { MenuTwoTone } from '@mui/icons-material';
 
 const StartRide = () => {
 
@@ -22,13 +18,13 @@ const StartRide = () => {
     // const [loadingUsableBikes, setLoadingUsableBikes] = useState(true);
     
     const [chosenStation, setChosenStation] = useState("");
+    const [chosenBike, setChosenBike] = useState("");
+    const [chosenEnd, setChosenEnd] = useState("");
 
     const [stationData, setStationData] = useState([]);
 
-    const bikeData = useState([]);
+    const [bikeData, setBikeData] = useState([]);
     const username = AuthenticationService.getLoggedInUser();
-
-
 
     const [info, setInfo] = useState({
         username: username,
@@ -63,7 +59,7 @@ const StartRide = () => {
 
     const getStations = async() => {
         try {
-            const response = await axios.get("/get-stations");
+            const response = await axios.get("/get-usable-stations");
             let arr = [];
             if (response.data.length > 0) {
                 let availableStartStations = response.data;
@@ -89,30 +85,32 @@ const StartRide = () => {
 
         };
 
-    /*
-    // useEffect(() => {
-    //     setLoadingUsableBikes(true);
-    //     const availableOptionsBikes = async() => {
-    //         try {
-    //             const availableUsableBikes = await axios.get("/get-usable-bikes/", null, { 
-                        params: { 
-                            stationId,
-                        }, ); //TODO: add param the selected station
-    //             if(availableUsableBikes.data.length > 0) {
-    //                 setAvailableUsableBikes(availableUsableBikes.data.map(bikeData => ({bikeId: bikeData.id})));
-    //             }
-    //         }
-    //         catch (err) {
-    //             let error = "";
-    //             if(err.response) {
-    //                 error += err.response;
-    //             }
-    //             return error;
-    //         }
-    //     };
-    //     availableOptionsBikes();
-    // }, [startStations]);
-    */
+        const getBikes = async() => {
+            try {
+                
+                console.log("got here")
+                const response = await axios.get("/get-usable-bikes", {params: { stationId: this.chosenStation } });
+                console.log("got here x2")
+                let arr = [];
+                if (response.data.length > 0) {
+                    let availableUsableBikes = response.data;
+                    for (const iterator of availableUsableBikes) {
+                        //let temp = iterator.id;
+                        arr.push(iterator.id);             
+                    }
+                    setBikeData(arr);
+                    console.log(bikeData);
+                }
+            }
+            catch (err) {
+                let error = "";
+                if(err.response) {
+                    error += err.response;
+                }
+                return error;
+            }
+    
+            };
 
     const submitHandler = async (event) => {
         event.preventDefault();
@@ -122,7 +120,9 @@ const StartRide = () => {
 
         if(Object.keys(errors).length === 0) {
 
-            info.startStationId = chosenStation;
+            setInfo.startStationId(chosenStation);
+            info.bikeId = chosenBike;
+            info.endStationId = chosenEnd;
             const response = await StartRideService(info);
             if (response.status === 201) {
             }
@@ -139,13 +139,22 @@ const StartRide = () => {
         console.log(event.target.value);
     }
 
+    const handleChange2 = (event) => {
+        setChosenBike(event.target.value);
+        console.log(event.target.value);
+    }
+
     const menuItems = stationData.map(item => (
         <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
       ));
 
+      const menuItemsBikes = bikeData.map(item => (
+        <MenuItem>{item.id}</MenuItem>
+      ));      
+
     return (
-        <Container variant="main" maxWidth = "l">
-        <FormControl sx={{ m: 1, minWidth: 120}}>
+        <Container variant="main" maxWidth = "xl">
+        <FormControl sx={{ m: 1, minWidth: 300}}>
             <InputLabel id="chosen-station-id">Start station</InputLabel>
             <Select
                 labelId="chosen-station-id"
@@ -157,7 +166,23 @@ const StartRide = () => {
             >
                 {menuItems}
             </Select>
-            <br></br>
+        </FormControl>
+        <br></br>
+        <FormControl sx={{ m: 1, minWidth: 300}}>
+            <InputLabel id="chosen-bike-id">Choose a bike</InputLabel>
+            <Select
+                labelId="chosen-bike-id"
+                id="chosen-bike"
+                value={chosenBike}
+                label="Choose bike"
+                onOpen={getBikes}
+                onChange={handleChange2}
+            >
+                {menuItemsBikes}
+            </Select>
+        </FormControl>
+        <br></br>
+        <FormControl sx={{ m: 1, minWidth: 300}}>
             <Button
                 onClick={submitHandler}
                 variant="contained"
