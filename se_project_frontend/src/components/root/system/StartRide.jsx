@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@mui/material';
+import { Button, Typography, Modal, Box } from '@mui/material';
 import { useState } from 'react';
 import StartRideService from "../../../api/system/StartRideService";
 import AuthenticationService from "../../../api/authentication/AuthenticationService";
@@ -15,6 +15,17 @@ const StartRide = () => {
 
     // const [loadingStartStations, setLoadingStartStations] = useState(true);
     // const [loadingUsableBikes, setLoadingUsableBikes] = useState(true);
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const style = {
+        width: 400,
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
 
     const [chosenStation, setChosenStation] = useState({});
     const [chosenBike, setChosenBike] = useState("");
@@ -42,20 +53,20 @@ const StartRide = () => {
     const validate = () => {
         const errors = {};
 
-        // if (!info.startStationId) {
-        //     errors.startStationId_error = true;
-        //     errors.startStationId = "Please choose a start station!";
-        // }
+        if (!info.startStationId) {
+            errors.startStationId_error = true;
+            errors.startStationId = "Please choose a start station!";
+        }
 
         if (!info.bikeId) {
             errors.bikeId_error = true;
             errors.bikeId = "Please choose a bike from your start station!";
         }
 
-        // if (!info.endStationId) {
-        //     errors.endStationId_error = true;
-        //     errors.endStationId = "Please choose an end station!";
-        // }
+        if (!info.endStationId) {
+            errors.endStationId_error = true;
+            errors.endStationId = "Please choose an end station!";
+        }
 
         return errors;
     };
@@ -147,7 +158,7 @@ const StartRide = () => {
 
     const submitHandler = async (event) => {
 
-        setInfo({ ...info, startStationId: chosenStationId});
+        setInfo({ ...info, startStationId: chosenStationId });
         console.log("bike: ", chosenBike);
         for (const iterator of endStationData) {
             if (iterator.name === chosenEnd) {
@@ -166,13 +177,49 @@ const StartRide = () => {
         if (Object.keys(errors).length === 0) {
             const response = await StartRideService(info);
             if (response.status === 201) {
+                return (
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title2"
+                        aria-describedby="modal-modal-description2"
+                    >
+                        <Box sx={style}>
+                            <Typography id="modal-modal-title2" variant="h6" component="h2">
+                                Ride started succesfully!
+                            </Typography>
+                            <Typography id="modal-modal-description2" sx={{ mt: 2 }}>
+                                Take care on the road!
+                            </Typography>
+                        </Box>
+                    </Modal>
+                )
             }
             else {
                 console.log(errors);
             }
 
         }
-        else console.log(errors);
+        else {
+            console.log(errors);
+            return (
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            You cannot start a ride!
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            Please verify your inputs!
+                        </Typography>
+                    </Box>
+                </Modal>
+            )
+        }
     };
 
     const handleChange1 = (event) => {
@@ -202,7 +249,11 @@ const StartRide = () => {
     ));
 
     return (
-        <Container variant="main" maxWidth="xl">
+
+        <Container maxWidth='xs' sx={{ fontWeight: 'light', typography: 'body1' }}>
+            <Typography component="h1" variant="h5">
+                Pick up a bike
+            </Typography >
             <FormControl sx={{ m: 1, minWidth: 300 }}>
                 <InputLabel id="chosen-station-id">Start station</InputLabel>
                 <Select
