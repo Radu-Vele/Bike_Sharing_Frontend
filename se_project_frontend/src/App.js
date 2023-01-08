@@ -14,6 +14,8 @@ import UserHome from './components/root/UsersHome';
 import myTheme from './theme/AppTheme';
 import StartRide from './components/root/system/StartRide';
 
+const drawerWidth = 240;
+
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ myTheme, open }) => ({
       flexGrow: 1,

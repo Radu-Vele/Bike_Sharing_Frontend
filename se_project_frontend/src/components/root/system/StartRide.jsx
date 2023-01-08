@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 import { Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -7,20 +7,29 @@ import AuthenticationService from "../../../api/authentication/AuthenticationSer
 import { useNavigate } from "react-router-dom";
 import axios from "../../../api/customAxiosConfig/CustomAxiosConfig";
 import { Container, Box } from "@mui/material";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
-const StartRide = (ride) => {
+const StartRide = () => {
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
-    const [startStations, setStartStations] = useState('DEFAULT');
-    const [usableBikes, setUsableBikes] = useState('DEFAULT');
-
-    const [loadingStartStations, setLoadingStartStations] = useState(true);
-    const [loadingUsableBikes, setLoadingUsableBikes] = useState(true);
+    // const [loadingStartStations, setLoadingStartStations] = useState(true);
+    // const [loadingUsableBikes, setLoadingUsableBikes] = useState(true);
     
-    const [availableStartStations, setAvailableStartStations] = useState();
-    const [availableUsableBikes, setAvailableUsableBikes] = useState();
-    
+    const [chosenStation, setChosenStation] = useState();
+
+    const iterator = useState();
+
+    const [stationData, setStationData] = useState([{
+        name: "",
+        id: ""
+    }]);
+
+    const bikeData = useState([]);
     const username = AuthenticationService.getLoggedInUser();
 
     const [info, setInfo] = useState({
@@ -31,7 +40,7 @@ const StartRide = (ride) => {
     });
 
     const [success, setSuccess] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState();
 
     const validate = () => {
         const errors = {};
@@ -54,52 +63,68 @@ const StartRide = (ride) => {
         return errors;            
     };
 
-    useEffect(() => {
-        setLoadingStartStations(true);
-        const availableOptions = async()  => {
+    const getStations = async() => {
+        
             try {
-                const availableStartStations = await axios.get("/get-stations");
+                const availableStartStations = axios.get("/get-stations");
                 if (availableStartStations.data.length > 0) {
-                    setAvailableStartStations(availableStartStations.data.map(station => ({name: station.name})));
-                    setLoadingStartStations(false);
+                    for (const iterator of availableStartStations.data) {
+                        let temp = {
+                            name: iterator.name,
+                            id: iterator.id
+                        };
+                        setStationData(stationData.concat(temp));
+                    }
+                        
+                    console.log(stationData[0].name);
                 }
             }
-            catch(err) {
-                console.log(err);
+            catch (err) {
+                let error = "";
+                if(err.response) {
+                    error += err.response;
+                }
+                return error;
             }
 
         };
-        availableOptions();
-    }, []);
 
-    useEffect(() => {
-        setLoadingUsableBikes(true);
-        const availableOptions = async() => {
-            try {
-                const availableUsableBikes = await axios.get("/get-usable-bikes"); //TODO: add param the selected station
-                if(availableUsableBikes.data.length > 0) {
-                    setAvailableUsableBikes(availableUsableBikes.data.map(bike => ({bikeId: bike.id})));
-                }
-            }
-            catch(err) {
-                console.log(err);
-            }
-        };
-        availableOptions();
-    }, [startStations]);
+    /*
+    // useEffect(() => {
+    //     setLoadingUsableBikes(true);
+    //     const availableOptionsBikes = async() => {
+    //         try {
+    //             const availableUsableBikes = await axios.get("/get-usable-bikes/", null, { 
+                        params: { 
+                            stationId,
+                        }, ); //TODO: add param the selected station
+    //             if(availableUsableBikes.data.length > 0) {
+    //                 setAvailableUsableBikes(availableUsableBikes.data.map(bikeData => ({bikeId: bikeData.id})));
+    //             }
+    //         }
+    //         catch (err) {
+    //             let error = "";
+    //             if(err.response) {
+    //                 error += err.response;
+    //             }
+    //             return error;
+    //         }
+    //     };
+    //     availableOptionsBikes();
+    // }, [startStations]);
+    */
 
     const submitHandler = async (event) => {
-        console.log(availableStartStations);
-        console.log(usableBikes);
         event.preventDefault();
 
         let errors = validate(info);
         setErrors(errors);
 
         if(Object.keys(errors).length === 0) {
+
+            info.startStationId = chosenStation;
             const response = await StartRideService(info);
             if (response.status === 201) {
-                window.location.reload(false);
             }
             else {
               console.log(errors);
@@ -109,17 +134,34 @@ const StartRide = (ride) => {
         else console.log(errors);
     };
 
+    const handleChange1 = async(event) => {
+        setChosenStation(event.target.value);
+    }
+
     return (
         <Container variant="main" maxWidth = "l">
-
-        <Button
-            onClick={submitHandler}
-            variant="contained"
-            color="secondary"
-        >
-            Start Your Ride
-        </Button>
-
+        <FormControl sx={{ m: 1, minWidth: 120}}>
+            <InputLabel id="chosen-station-id">Start station</InputLabel>
+            <Select
+                labelId="chosen-station-id"
+                id="chosen-station"
+                value={chosenStation}
+                label="Choose station"
+                onClick={getStations}
+                onChange={handleChange1}
+            >
+                for (const iterator of stationData) {
+                    <MenuItem value={iterator.id}>{iterator.name}</MenuItem>
+                }
+            </Select>
+            <Button
+                onClick={submitHandler}
+                variant="contained"
+                color="secondary"
+            >
+                Start Your Ride
+            </Button> 
+        </FormControl>
         </Container>
       );
 }
