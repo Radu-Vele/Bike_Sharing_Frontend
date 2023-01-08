@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { MenuTwoTone } from '@mui/icons-material';
 
 const StartRide = () => {
 
@@ -20,17 +21,14 @@ const StartRide = () => {
     // const [loadingStartStations, setLoadingStartStations] = useState(true);
     // const [loadingUsableBikes, setLoadingUsableBikes] = useState(true);
     
-    const [chosenStation, setChosenStation] = useState();
+    const [chosenStation, setChosenStation] = useState("");
 
-    const iterator = useState();
-
-    const [stationData, setStationData] = useState([{
-        name: "",
-        id: ""
-    }]);
+    const [stationData, setStationData] = useState([]);
 
     const bikeData = useState([]);
     const username = AuthenticationService.getLoggedInUser();
+
+
 
     const [info, setInfo] = useState({
         username: username,
@@ -64,28 +62,30 @@ const StartRide = () => {
     };
 
     const getStations = async() => {
-        
-            try {
-                const availableStartStations = axios.get("/get-stations");
-                if (availableStartStations.data.length > 0) {
-                    for (const iterator of availableStartStations.data) {
-                        let temp = {
-                            name: iterator.name,
-                            id: iterator.id
-                        };
-                        setStationData(stationData.concat(temp));
-                    }
-                        
-                    console.log(stationData[0].name);
+        try {
+            const response = await axios.get("/get-stations");
+            let arr = [];
+            if (response.data.length > 0) {
+                let availableStartStations = response.data;
+                for (const iterator of availableStartStations) {
+                    let temp = {
+                        name: iterator.name,
+                        id: iterator.id
+                    };
+
+                    arr.push(temp);             
                 }
+                setStationData(arr);
+                console.log(stationData);
             }
-            catch (err) {
-                let error = "";
-                if(err.response) {
-                    error += err.response;
-                }
-                return error;
+        }
+        catch (err) {
+            let error = "";
+            if(err.response) {
+                error += err.response;
             }
+            return error;
+        }
 
         };
 
@@ -134,9 +134,14 @@ const StartRide = () => {
         else console.log(errors);
     };
 
-    const handleChange1 = async(event) => {
+    const handleChange1 = (event) => {
         setChosenStation(event.target.value);
+        console.log(event.target.value);
     }
+
+    const menuItems = stationData.map(item => (
+        <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
+      ));
 
     return (
         <Container variant="main" maxWidth = "l">
@@ -147,13 +152,12 @@ const StartRide = () => {
                 id="chosen-station"
                 value={chosenStation}
                 label="Choose station"
-                onClick={getStations}
+                onOpen={getStations}
                 onChange={handleChange1}
             >
-                for (const iterator of stationData) {
-                    <MenuItem value={iterator.id}>{iterator.name}</MenuItem>
-                }
+                {menuItems}
             </Select>
+            <br></br>
             <Button
                 onClick={submitHandler}
                 variant="contained"
