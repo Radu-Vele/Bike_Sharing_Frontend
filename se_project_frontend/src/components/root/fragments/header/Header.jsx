@@ -1,7 +1,5 @@
 import React from "react";
-import styles from "../../../../css/Header.module.css";
 import style_nav from "../../../../css/Navlink.module.css";
-import Navbar from "./navbar/Navbar";
 import { Box } from "@mui/material";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
