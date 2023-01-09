@@ -2,7 +2,6 @@ import React from "react";
 import axios from "../customAxiosConfig/CustomAxiosConfig";
 
 const StartRideService = (info) => {
-
   try {
     return axios.post("/init-ride", info);
   } catch (err) {
