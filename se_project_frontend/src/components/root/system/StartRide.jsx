@@ -9,6 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import UserDetailsService from '../../../api/users/UserDetailsService';
 
 const StartRide = () => {
     const [openSuccess, setOpenSuccess] = useState(false);
@@ -27,7 +28,8 @@ const StartRide = () => {
     const [stationData, setStationData] = useState([]);
     const [endStationData, setEndStationData] = useState([]);
     const [bikeData, setBikeData] = useState([]);
-
+    const [user, setUser] = useState({});
+    const [hidePage, setHidePage] = useState(false);
 
     // Data retrieved from the UI
     const [chosenStation, setChosenStation] = useState('');
@@ -73,12 +75,17 @@ const StartRide = () => {
             return error;
         }
     };
-
-
     //executed at component mount
     useLayoutEffect(() => {
         let unmounted = false;
-      
+        
+        UserDetailsService().then((response) => {
+            if(!unmounted) {
+                setUser(response.data);
+                setHidePage(response.data.activeRide); //don't show page if the use has an active ride
+            }
+          });
+        
         getStations().then((dataArr) => {
           if(!unmounted) {
               setStationData(dataArr);
@@ -94,17 +101,17 @@ const StartRide = () => {
     const validate = () => { //TODO: check if well defined
         const errors = {};
 
-        if (info.startStationId == '') {
+        if (info.startStationId === '') {
             errors.startStationId_error = true;
             errors.startStationId = "Please choose a start station!";
         }
 
-        if (info.bikeId == '') {
+        if (info.bikeId === '') {
             errors.bikeId_error = true;
             errors.bikeId = "Please choose a bike from your start station!";
         }
 
-        if (info.endStationId == '') {
+        if (info.endStationId === '') {
             errors.endStationId_error = true;
             errors.endStationId = "Please choose an end station!";
         }
@@ -147,7 +154,7 @@ const StartRide = () => {
                         name: iterator.name,
                         id: iterator.id
                     };
-                    if(temp.name != chosenStation) { //do not show the start station as an option
+                    if(temp.name !== chosenStation) { //do not show the start station as an option
                         arr.push(temp);
                     }
                 }
@@ -199,7 +206,7 @@ const StartRide = () => {
         let chosenId  = 0;
 
         for (let i = 0; i < stationData.length; i++) {
-            if(event.target.value == stationData[i].name) {
+            if(event.target.value === stationData[i].name) {
                 chosenId = stationData[i].id;
             }
         }
@@ -223,7 +230,7 @@ const StartRide = () => {
         let chosenId = 0;
 
         for (let i = 0; i < stationData.length; i++) {
-            if(event.target.value == stationData[i].name) {
+            if(event.target.value === stationData[i].name) {
                 chosenId = stationData[i].id;
             }
         }
@@ -247,93 +254,101 @@ const StartRide = () => {
     ));
 
     return (
-
-        <Container maxWidth='xs' sx={{ fontWeight: 'light', typography: 'body1' }}>
-            <Typography component="h1" variant="h5">
-                Pick up a bike
-            </Typography >
-            <FormControl sx={{ m: 1, minWidth: 300 }}>
-            <InputLabel id="chosen-station-id">Start station</InputLabel>
-                <Select
-                    labelId="chosen-station-id"
-                    id="chosen-station"
-                    value={chosenStation}
-                    onChange={handleChange1}
-                    label="Choose station"
-                >
-                    {menuItemsStations}
-                </Select>
-            </FormControl>
-            <br></br>
-            <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <InputLabel id="chosen-bike-id">Choose bike</InputLabel>
-                <Select
-                    labelId="chosen-bike-id"
-                    id="chosen-bike"
-                    value={chosenBike}
-                    label="Choose bike"
-                    onOpen={getBikes}
-                    onChange={handleChange2}
-                >
-                    {menuItemsBikes}
-                </Select>
-            </FormControl>
-            <br></br>
-            <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <InputLabel id="chosen-end-station-id">End station</InputLabel>
-                <Select
-                    labelId="chosen-end-station-id"
-                    id="chosen-end-station"
-                    value={chosenEnd}
-                    label="Choose station"
-                    onOpen={getEndStations}
-                    onChange={handleChange3}
-                >
-                    {menuItemsEnd}
-                </Select>
-            </FormControl>
-            <br></br>
-            <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <Button
-                    onClick={submitHandler}
-                    variant="contained"
-                    color="secondary"
-                >
-                    Start Your Ride
-                </Button>
-            </FormControl>
-            <br></br>
-            <Modal
-                    open={openError}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                    onClose={() => {setOpenError(false)}}
-                >
-                    <Box sx={style}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            You cannot start a ride!
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Please verify your inputs!
-                        </Typography>
-                    </Box>
-            </Modal>
-            <Modal
-                    open={openSuccess}
-                    onClose={() => {setOpenSuccess(false)}}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Enjoy Your Ride!
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            And take care!
-                        </Typography>
-                    </Box>
-            </Modal>
-        </Container>
+    <>
+    <div hidden={hidePage}>
+    <Container maxWidth='xs' sx={{ fontWeight: 'light', typography: 'body1' }}>
+        <Typography component="h1" variant="h5">
+            Pick up a bike
+        </Typography >
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+        <InputLabel id="chosen-station-id">Start station</InputLabel>
+            <Select
+                labelId="chosen-station-id"
+                id="chosen-station"
+                value={chosenStation}
+                onChange={handleChange1}
+                label="Choose station"
+            >
+                {menuItemsStations}
+            </Select>
+        </FormControl>
+        <br></br>
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+            <InputLabel id="chosen-bike-id">Choose bike</InputLabel>
+            <Select
+                labelId="chosen-bike-id"
+                id="chosen-bike"
+                value={chosenBike}
+                label="Choose bike"
+                onOpen={getBikes}
+                onChange={handleChange2}
+            >
+                {menuItemsBikes}
+            </Select>
+        </FormControl>
+        <br></br>
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+            <InputLabel id="chosen-end-station-id">End station</InputLabel>
+            <Select
+                labelId="chosen-end-station-id"
+                id="chosen-end-station"
+                value={chosenEnd}
+                label="Choose station"
+                onOpen={getEndStations}
+                onChange={handleChange3}
+            >
+                {menuItemsEnd}
+            </Select>
+        </FormControl>
+        <br></br>
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+            <Button
+                onClick={submitHandler}
+                variant="contained"
+                color="secondary"
+            >
+                Start Your Ride
+            </Button>
+        </FormControl>
+        <br></br>
+        <Modal
+                open={openError}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                onClose={() => {setOpenError(false)}}
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        You cannot start a ride!
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        Please verify your inputs!
+                    </Typography>
+                </Box>
+        </Modal>
+        <Modal
+                open={openSuccess}
+                onClose={() => {setOpenSuccess(false)}}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Enjoy Your Ride!
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        And take care!
+                    </Typography>
+                </Box>
+        </Modal>
+    </Container>
+    </div>
+    <div hidden={!hidePage}>
+        <Typography align='center' color="error">
+            You can't pick up a new bike while you're having an active ride!
+        </Typography>
+    </div>
+    </>
     );
 }
 
