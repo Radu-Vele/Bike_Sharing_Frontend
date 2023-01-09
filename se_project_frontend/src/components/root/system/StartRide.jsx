@@ -229,19 +229,19 @@ const StartRide = () => {
         setChosenEnd(event.target.value);
         let chosenId = 0;
 
-        for (let i = 0; i < stationData.length; i++) {
-            if(event.target.value === stationData[i].name) {
-                chosenId = stationData[i].id;
+        for (let i = 0; i < endStationData.length; i++) {
+            if(event.target.value === endStationData[i].name) {
+                chosenId = endStationData[i].id;
             }
         }
-        
+        console.log(chosenId)
         setChosenStationId(chosenId);
         setInfo({ ...info, endStationId: chosenId});
     }
 
 
     //Map from station Data to Menu item
-    const menuItemsStations = stationData.map((item, index) => (
+    const menuItemsStations = stationData.map((item) => (
         <MenuItem key={item.id} value={item.name}> {item.name} </MenuItem>
     ));
 
