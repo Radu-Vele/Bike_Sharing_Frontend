@@ -95,7 +95,11 @@ const FinishRide = () => {
             </Typography>
 
             <Typography fontSize={18}>
-                {recommendedRoute}
+                {recommendedRoute.split('\n')[0]}
+            </Typography>
+            <br></br>
+            <Typography>
+                {recommendedRoute.split('\n')[1]}
             </Typography>
             
             <br></br>
