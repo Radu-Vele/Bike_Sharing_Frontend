@@ -11,17 +11,22 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import UserDetailsService from '../../../api/users/UserDetailsService';
 
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+  };
+
 const StartRide = () => {
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const style = {
-        width: 400,
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
     const [selectedIndex, setSelectedIndex] = React.useState(1);
 
     // Arrays of data retrieved through calls
@@ -318,10 +323,10 @@ const StartRide = () => {
                 onClose={() => {setOpenError(false)}}
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    <Typography id="modal-modal-title" variant="h6" component="h2" textAlign="center">
                         You cannot start a ride!
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 } } textAlign="center">
                         Please verify your inputs!
                     </Typography>
                 </Box>
@@ -333,10 +338,10 @@ const StartRide = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    <Typography id="modal-modal-title" variant="h6" component="h2" textAlign="center">
                         Enjoy Your Ride!
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }} textAlign="center">
                         And take care!
                     </Typography>
                 </Box>
