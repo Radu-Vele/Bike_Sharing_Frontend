@@ -1,16 +1,16 @@
 import React from "react";
 import { useState, useLayoutEffect } from "react";
-import {DialogContent, DialogContentText, TextField, DialogActions, Button, DialogTitle } from "@mui/material"
+import {DialogContent, DialogContentText, TextField, DialogActions, Button, DialogTitle, Rating } from "@mui/material"
 import ChangeBikeRating from "../../../api/system/ChangeBikeRating";
 import UserDetailsService from "../../../api/users/UserDetailsService";
 
 const FeedbackForm = (hook) => {
 
     const [user, setUser] = useState({});
-    const info = {
+    const [info, setInfo] = useState({
         bikeId: 0,
         currentRating: 10
-    };
+    });
 
     useLayoutEffect(() => {
         let unmounted = false;
@@ -25,15 +25,13 @@ const FeedbackForm = (hook) => {
         };
     }, [])
 
-    const[givenRating, setGivenRating] = useState();
+    const[givenRating, setGivenRating] = useState(0);
 
     const computeRating = () => {
-        if(Object.keys(givenRating).length === 0) {
-            console.log("no info from form :(");
+        if(givenRating === 0) {
             return false;
         }
         else {
-            //input is given - should be validated TODO
             info.currentRating = givenRating;
             info.bikeId = user.currentRide.bikeId;
             return true;
@@ -67,23 +65,22 @@ const FeedbackForm = (hook) => {
 
     return (
     <>
-        <DialogTitle>Evaluate The Bike Condition</DialogTitle>
+        <DialogTitle>The Condition of your Bike</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                It would be very helpful for us and for the other users to answer
-                a few questions about your ride. 
-                We'd appreciate it a lot!
+                Please evaluate the condition of your bike (consider brakes functioning, gears, direction etc.). 
+                If you set it to one star the bike will not be available from now on and our team will check it.
             </DialogContentText>
-            <TextField
-                autoFocus
-                margin="dense"
-                id="given-rating"
-                label="Your rating (out of 10)"
-                type="given-rating"
-                fullWidth
-                variant="standard"
-                onChange={(e) => setGivenRating(e.target.value)}
+
+            <Rating 
+                name="The raing of your bike:" 
+                defaultValue={5} 
+                max={10} 
+                onChange={(event, newValue) => {
+                    setGivenRating(newValue);
+                  }}
             />
+
             
         </DialogContent>
 
