@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Typography, Modal, Box } from '@mui/material';
-import { useState } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 import StartRideService from "../../../api/system/StartRideService";
 import AuthenticationService from "../../../api/authentication/AuthenticationService";
 import axios from "../../../api/customAxiosConfig/CustomAxiosConfig";
@@ -11,14 +11,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
 const StartRide = () => {
-    // const navigate = useNavigate();
-
-    // const [loadingStartStations, setLoadingStartStations] = useState(true);
-    // const [loadingUsableBikes, setLoadingUsableBikes] = useState(true);
-
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [openSuccess, setOpenSuccess] = useState(false);
+    const [openError, setOpenError] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const style = {
         width: 400,
@@ -26,20 +21,25 @@ const StartRide = () => {
         boxShadow: 24,
         p: 4,
     };
+    const [selectedIndex, setSelectedIndex] = React.useState(1);
 
-    const [chosenStation, setChosenStation] = useState({});
-    const [chosenBike, setChosenBike] = useState("");
-    const [chosenEnd, setChosenEnd] = useState("");
-
-    const [chosenStationId, setChosenStationId] = useState(0);
-    var chosenEndId;
-
+    // Arrays of data retrieved through calls
     const [stationData, setStationData] = useState([]);
     const [endStationData, setEndStationData] = useState([]);
-
     const [bikeData, setBikeData] = useState([]);
+
+
+    // Data retrieved from the UI
+    const [chosenStation, setChosenStation] = useState('');
+    const [chosenStationId, setChosenStationId] = useState('');
+    const [chosenBike, setChosenBike] = useState('');
+    const [chosenEnd, setChosenEnd] = useState('');
+    const [chosenEndId, setChosenEndId] = useState('');
+
+    //Logged in user
     const username = AuthenticationService.getLoggedInUser();
 
+    // Info for the init ride call
     const [info, setInfo] = useState({
         username: username,
         startStationId: "",
@@ -47,30 +47,7 @@ const StartRide = () => {
         bikeId: ""
     });
 
-    const [success, setSuccess] = useState(false);
-    const [errors, setErrors] = useState();
-
-    const validate = () => {
-        const errors = {};
-
-        if (!info.startStationId) {
-            errors.startStationId_error = true;
-            errors.startStationId = "Please choose a start station!";
-        }
-
-        if (!info.bikeId) {
-            errors.bikeId_error = true;
-            errors.bikeId = "Please choose a bike from your start station!";
-        }
-
-        if (!info.endStationId) {
-            errors.endStationId_error = true;
-            errors.endStationId = "Please choose an end station!";
-        }
-
-        return errors;
-    };
-
+    // Retrieve usable stations
     const getStations = async () => {
         try {
             const response = await axios.get("/get-usable-stations");
@@ -85,7 +62,7 @@ const StartRide = () => {
 
                     arr.push(temp);
                 }
-                setStationData(arr);
+                return(arr);
             }
         }
         catch (err) {
@@ -95,18 +72,50 @@ const StartRide = () => {
             }
             return error;
         }
-
     };
 
-    const getBikes = async () => {
-        try {
-            for (const iterator of stationData) {
-                if (iterator.name === chosenStation) {
-                    setChosenStationId(iterator.id);
-                    console.log(chosenStationId);
 
-                }
-            }
+    //executed at component mount
+    useLayoutEffect(() => {
+        let unmounted = false;
+      
+        getStations().then((dataArr) => {
+          if(!unmounted) {
+              setStationData(dataArr);
+          }
+        });
+    
+        return () => {
+            unmounted = true;
+          };
+    }, []) 
+
+
+    const validate = () => { //TODO: check if well defined
+        const errors = {};
+
+        if (info.startStationId == '') {
+            errors.startStationId_error = true;
+            errors.startStationId = "Please choose a start station!";
+        }
+
+        if (info.bikeId == '') {
+            errors.bikeId_error = true;
+            errors.bikeId = "Please choose a bike from your start station!";
+        }
+
+        if (info.endStationId == '') {
+            errors.endStationId_error = true;
+            errors.endStationId = "Please choose an end station!";
+        }
+
+        return errors;
+    };
+
+
+
+    const getBikes = async () => { //works well
+        try {
             const response = await axios.get("/get-usable-bikes?stationId=" + chosenStationId);
             let arr = [];
             if (response.data.length > 0) {
@@ -116,7 +125,6 @@ const StartRide = () => {
                     arr.push(iterator.id);
                 }
                 setBikeData(arr);
-                console.log("bike arr:", bikeData);
             }
         }
         catch (err) {
@@ -126,7 +134,6 @@ const StartRide = () => {
             }
             return error;
         }
-
     };
 
     const getEndStations = async () => {
@@ -140,8 +147,9 @@ const StartRide = () => {
                         name: iterator.name,
                         id: iterator.id
                     };
-
-                    arr.push(temp);
+                    if(temp.name != chosenStation) { //do not show the start station as an option
+                        arr.push(temp);
+                    }
                 }
                 setEndStationData(arr);
             }
@@ -158,94 +166,84 @@ const StartRide = () => {
 
     const submitHandler = async (event) => {
 
-        setInfo({ ...info, startStationId: chosenStationId });
-        console.log("bike: ", chosenBike);
-        for (const iterator of endStationData) {
-            if (iterator.name === chosenEnd) {
-                chosenEndId = iterator.id;
-                console.log(chosenEndId)
-            }
-        }
-
-        info.endStationId = chosenEndId
+        console.log(info);
 
         event.preventDefault();
 
         let errors = validate(info);
+
         setErrors(errors);
 
         if (Object.keys(errors).length === 0) {
             const response = await StartRideService(info);
             if (response.status === 201) {
-                return (
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title2"
-                        aria-describedby="modal-modal-description2"
-                    >
-                        <Box sx={style}>
-                            <Typography id="modal-modal-title2" variant="h6" component="h2">
-                                Ride started succesfully!
-                            </Typography>
-                            <Typography id="modal-modal-description2" sx={{ mt: 2 }}>
-                                Take care on the road!
-                            </Typography>
-                        </Box>
-                    </Modal>
-                )
+               console.log("init ride");
+               setOpenSuccess(true);
             }
             else {
                 console.log(errors);
+                setOpenError(true);
             }
-
         }
         else {
-            console.log(errors);
-            return (
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            You cannot start a ride!
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Please verify your inputs!
-                        </Typography>
-                    </Box>
-                </Modal>
-            )
+             console.log(errors);
+             setOpenError(true);
         }
     };
-
+    
     const handleChange1 = (event) => {
+        //set chosen station name
         setChosenStation(event.target.value);
+        
+        //set chosen Station ID
+        let chosenId  = 0;
+
+        for (let i = 0; i < stationData.length; i++) {
+            if(event.target.value == stationData[i].name) {
+                chosenId = stationData[i].id;
+            }
+        }
+
+        setChosenStationId(chosenId);
+        
+        // clear other fields and info regarding the bike and end station
+        setChosenBike('');
+        setChosenEnd('');
+        setInfo({ ...info, startStationId: chosenId, bikeId: 0, endStationId: 0});
     }
 
     const handleChange2 = (event) => {
         setChosenBike(event.target.value);
-        setInfo({ ...info, bikeId: event.target.value })
+        setInfo({ ...info, bikeId: event.target.value });
     }
+
 
     const handleChange3 = (event) => {
         setChosenEnd(event.target.value);
+        let chosenId = 0;
+
+        for (let i = 0; i < stationData.length; i++) {
+            if(event.target.value == stationData[i].name) {
+                chosenId = stationData[i].id;
+            }
+        }
+        
+        setChosenStationId(chosenId);
+        setInfo({ ...info, endStationId: chosenId});
     }
 
 
-    const menuItems = stationData.map(item => (
-        <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
+    //Map from station Data to Menu item
+    const menuItemsStations = stationData.map((item, index) => (
+        <MenuItem key={item.id} value={item.name}> {item.name} </MenuItem>
     ));
 
     const menuItemsBikes = bikeData.map((item, i) => (
-        <MenuItem key={i} value={i}>{item}</MenuItem>
+        <MenuItem key={i} value={item}> {item} </MenuItem>
     ));
 
     const menuItemsEnd = endStationData.map(item => (
-        <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
+        <MenuItem key={item.id} value={item.name}> {item.name} </MenuItem>
     ));
 
     return (
@@ -255,16 +253,15 @@ const StartRide = () => {
                 Pick up a bike
             </Typography >
             <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <InputLabel id="chosen-station-id">Start station</InputLabel>
+            <InputLabel id="chosen-station-id">Start station</InputLabel>
                 <Select
                     labelId="chosen-station-id"
                     id="chosen-station"
                     value={chosenStation}
-                    label="Choose station"
-                    onOpen={getStations}
                     onChange={handleChange1}
+                    label="Choose station"
                 >
-                    {menuItems}
+                    {menuItemsStations}
                 </Select>
             </FormControl>
             <br></br>
@@ -305,6 +302,37 @@ const StartRide = () => {
                     Start Your Ride
                 </Button>
             </FormControl>
+            <br></br>
+            <Modal
+                    open={openError}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    onClose={() => {setOpenError(false)}}
+                >
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            You cannot start a ride!
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            Please verify your inputs!
+                        </Typography>
+                    </Box>
+            </Modal>
+            <Modal
+                    open={openSuccess}
+                    onClose={() => {setOpenSuccess(false)}}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Enjoy Your Ride!
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            And take care!
+                        </Typography>
+                    </Box>
+            </Modal>
         </Container>
     );
 }
