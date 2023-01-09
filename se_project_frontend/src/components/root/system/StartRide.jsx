@@ -133,8 +133,12 @@ const StartRide = () => {
             if (response.data.length > 0) {
                 let availableUsableBikes = response.data;
                 for (const iterator of availableUsableBikes) {
-                    //let temp = iterator.id;
-                    arr.push(iterator.id);
+                    let temp = {
+                        id: iterator.id,
+                        rating: iterator.rating
+                    };
+
+                    arr.push(temp);
                 }
                 setBikeData(arr);
             }
@@ -251,7 +255,7 @@ const StartRide = () => {
     ));
 
     const menuItemsBikes = bikeData.map((item, i) => (
-        <MenuItem key={i} value={item}> {item} </MenuItem>
+        <MenuItem key={i} value={item.id}> {" - id: " + item.id.toString() + " - rating: " + item.rating.toString()} </MenuItem>
     ));
 
     const menuItemsEnd = endStationData.map(item => (
