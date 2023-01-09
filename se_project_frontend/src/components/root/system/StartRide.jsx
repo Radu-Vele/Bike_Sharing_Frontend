@@ -333,7 +333,10 @@ const StartRide = () => {
         </Modal>
         <Modal
                 open={openSuccess}
-                onClose={() => {setOpenSuccess(false)}}
+                onClose={() => {
+                    setOpenSuccess(false);
+                    setHidePage(true);
+                }}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
