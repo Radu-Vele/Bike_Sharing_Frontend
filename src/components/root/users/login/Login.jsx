@@ -44,7 +44,6 @@ const Login = () => {
   };
 
   const handleSubmit = async (event) => {
-    
     event.preventDefault();
     let errors = validate(credentials);
     setErrors(errors);
@@ -57,7 +56,6 @@ const Login = () => {
         credentials.username,
         credentials.password
       );
-      console.log(res.data);
 
       if (res.status !== 200) {
         setLoading(false);
@@ -74,7 +72,7 @@ const Login = () => {
         
         AuthenticationService.setUpToken(token);
         
-        const response = await LoginService(credentials.username, jwtToken);
+        const response = await LoginService();
         console.log(response);
         
         if (response.status !== 200) {
