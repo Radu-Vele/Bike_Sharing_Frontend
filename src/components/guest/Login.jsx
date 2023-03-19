@@ -1,9 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthenticationService from "../../../../api/authentication/AuthenticationService";
-import LoginService from "../../../../api/login/LoginService";
-import AuthenticateUserDataService from "../../../../api/authentication/AuthenticateUserDataService";
+import AuthenticationService from "../../api/authentication/AuthenticationService";
+import LoginService from "../../api/login/LoginService";
+import AuthenticateUserDataService from "../../api/authentication/AuthenticateUserDataService";
 import { TextField } from "@mui/material"
 import { Container } from "@mui/system";
 import { Box } from "@mui/system";
@@ -45,6 +45,7 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
     let errors = validate(credentials);
     setErrors(errors);
     console.log(errors);

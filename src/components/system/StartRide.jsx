@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Button, Typography, Modal, Box } from '@mui/material';
 import { useState, useLayoutEffect, useEffect } from 'react';
-import StartRideService from "../../../api/system/StartRideService";
-import AuthenticationService from "../../../api/authentication/AuthenticationService";
-import axios from "../../../api/customAxiosConfig/CustomAxiosConfig";
+import StartRideService from "../../api/system/StartRideService";
+import AuthenticationService from "../../api/authentication/AuthenticationService";
+import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
 import { Container } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import UserDetailsService from '../../../api/users/UserDetailsService';
+import UserDetailsService from '../../api/users/UserDetailsService';
 
 const style = {
     position: 'absolute',

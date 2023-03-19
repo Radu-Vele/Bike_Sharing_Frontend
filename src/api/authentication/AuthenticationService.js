@@ -2,7 +2,11 @@ class AuthenticationService {
     registerSuccessfulLoginUser(username) {
       sessionStorage.setItem("authenticatedUser", username);
       sessionStorage.setItem("role", "user");
-      console.log("Successful login");
+    }
+
+    registerSuccessfulLoginAdmin(username) {
+      sessionStorage.setItem("authenticatedUser", username);
+      sessionStorage.setItem("role", "admin");
     }
   
     logout() {
@@ -16,6 +20,16 @@ class AuthenticationService {
       if (role !== "user") {
         return false;
       } else {
+        return true;
+      }
+    }
+
+    isAdminLoggedIn() {
+      let role = sessionStorage.getItem("role");
+      if (role !== "admin") {
+        return false;
+      }
+      else {
         return true;
       }
     }

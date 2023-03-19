@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material"
-import MyRideDrawer from "./fragments/drawer/Drawer";
-import BasicMap from "./fragments/Map"
+import MyRideDrawer from "../fragments/drawer/Drawer";
+import BasicMap from "../fragments/Map"
 import { Container } from "@mui/system";
 import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
 import { useState, useLayoutEffect, useEffect } from 'react';
@@ -22,7 +22,7 @@ const UserHome = () => {
     }
   }
 
-useLayoutEffect( () => { // TODO
+useLayoutEffect( () => {
     let unmounted = false;
     
     retrieveStations().then((response) => {
