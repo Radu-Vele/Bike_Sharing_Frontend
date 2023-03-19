@@ -4,11 +4,16 @@ import AuthenticationService from "../../api/authentication/AuthenticationServic
 import { Navigate } from "react-router-dom";
 
 const isUserLoggedIn = AuthenticationService.isUserLoggedIn();
+const isAdminLoggedIn = AuthenticationService.isAdminLoggedIn();
 
 const ProtectedRoutesGuest = () => {
   if (isUserLoggedIn) {
     return <Navigate to="/user-home" />;
-  } else {
+  } 
+  else if (isAdminLoggedIn) {
+    return <Navigate to="/admin-home" />;
+  }
+  else {
     return <Outlet />;
   }
 };

@@ -1,8 +1,8 @@
 import React from "react";
 import { useState, useLayoutEffect } from "react";
 import {DialogContent, DialogContentText, TextField, DialogActions, Button, DialogTitle, Rating } from "@mui/material"
-import ChangeBikeRating from "../../../api/system/ChangeBikeRating";
-import UserDetailsService from "../../../api/users/UserDetailsService";
+import ChangeBikeRating from "../../api/system/ChangeBikeRating";
+import UserDetailsService from "../../api/users/UserDetailsService";
 
 const FeedbackForm = (hook) => {
 

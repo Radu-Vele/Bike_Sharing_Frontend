@@ -12,7 +12,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { useState } from "react";
-import RidesHistoryService from '../../../../api/users/RidesHistoryService';
+import RidesHistoryService from '../../../api/users/RidesHistoryService';
 
 export default function RidesTable() {
   const [rows, setRows] = useState([]);

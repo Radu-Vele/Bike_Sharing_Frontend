@@ -1,6 +1,7 @@
 import React from "react";
-import style_nav from "../../../../css/Navlink.module.css";
-import { Box } from "@mui/material";
+import { useState } from "react";
+import style_nav from "../../../css/Navlink.module.css";
+import { Box, Switch, FormGroup, FormControlLabel } from "@mui/material";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -8,25 +9,40 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
 import { NavLink } from "react-router-dom";
-import AuthenticationService from "../../../../api/authentication/AuthenticationService";
+import AuthenticationService from "../../../api/authentication/AuthenticationService";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 
 const Header = () => {
+  const [adminInUserMode, setAdminInUserMode] = useState(false);
+  const [mode4Admin, setMode4Admin] = useState("Admin Mode");
   const userLogged = AuthenticationService.isUserLoggedIn();
+  const adminLogged = AuthenticationService.isAdminLoggedIn();
+
   const location = useLocation();
   const navigate = useNavigate();
+  const label = "-"; //?
+
+  const handleSwitchToggle = (event) => {
+    if(event.target.checked) {
+      setAdminInUserMode(true);
+      setMode4Admin("User Mode");
+      navigate("/user-home");
+    }
+    else {
+      setAdminInUserMode(false);
+      setMode4Admin("Admin Mode");
+      navigate("/admin-home");
+    }
+  }
 
   return (
-    <Box component="main" 
-    maxWidth="xs"
-    >
-    {userLogged && (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    <Box component="main" maxWidth="xs" >
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
         <Toolbar>
-          <IconButton
+        <IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -38,6 +54,9 @@ const Header = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Cluj Bike Sharing
           </Typography>
+    
+    {(userLogged || adminInUserMode) && (  
+      <>
           <Button color="inherit">
             <NavLink 
             to="/user-home" 
@@ -63,42 +82,42 @@ const Header = () => {
             >
               My Account</NavLink>
           </Button>
-
-          <Button color="inherit"
-            onClick={AuthenticationService.logout}
-          >
+      </>
+    )}
+    
+    {(adminLogged && !adminInUserMode) && (
+      <>
+          <Button color="inherit">
             <NavLink 
-            to="/"
+            to="/admin-home"
             className={style_nav.nav_link_default} 
-            activeClassName={style_nav.nav_link_active}         
+            activeClassName={style_nav.nav_link_active}
             >
-              <LogoutIcon fontSize="small"/>
-            </NavLink>
+              Home </NavLink>
           </Button>
 
-
-        </Toolbar>
-      </AppBar>
-    </Box>
+          <Button color="inherit">
+            <NavLink 
+            to="/new-admin"
+            className={style_nav.nav_link_default} 
+            activeClassName={style_nav.nav_link_active}
+            >
+              New Admin</NavLink>
+          </Button>
+      </>
     )}
-    {!userLogged && (
-    <Box sx={{ flexGrow: 1 }}>
-     <AppBar position="static">
-       <Toolbar>
-        <IconButton
-           size="large"
-           edge="start"
-           color="inherit"
-           aria-label="menu" //TODO: make it point to home page
-           sx={{ mr: 2 }}
-         >
-           <DirectionsBikeIcon />
-        </IconButton>
 
-         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-           Cluj Bike Sharing
-         </Typography>
-         
+    { adminLogged && (
+      <FormGroup>
+        <FormControlLabel
+          control={<Switch {...label} color='secondary' onChange={handleSwitchToggle} />}
+          label={mode4Admin}
+        />
+      </FormGroup>
+    )} 
+    
+    {!userLogged && !adminLogged && (
+      <> 
          <Button color="inherit">
            <NavLink 
            to="/"
@@ -129,12 +148,28 @@ const Header = () => {
             </NavLink>
          </Button>
     
-        </Toolbar>
-      </AppBar>
-      </Box>     
+      </>
     )}
-    </Box>
 
+    {(userLogged || adminLogged) && (
+      <>
+        <Button color="inherit" edge="end"
+            onClick={AuthenticationService.logout}
+          >
+            <NavLink 
+            to="/"
+            className={style_nav.nav_link_default} 
+            activeClassName={style_nav.nav_link_active}         
+            >
+              <LogoutIcon fontSize="small"/>
+            </NavLink>
+        </Button>
+      </>
+    )}
+          </Toolbar>
+        </AppBar>
+      </Box>
+    </Box>
   );
 };
 

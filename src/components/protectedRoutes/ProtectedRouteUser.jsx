@@ -4,7 +4,7 @@ import AuthenticationService from "../../api/authentication/AuthenticationServic
 import { Navigate } from "react-router-dom";
 
 const useAuth = () => {
-  return AuthenticationService.isUserLoggedIn();
+  return (AuthenticationService.isUserLoggedIn() || AuthenticationService.isAdminLoggedIn());
 };
 const ProtectedRoutesUser = () => {
   const isAuth = useAuth();

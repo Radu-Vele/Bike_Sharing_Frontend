@@ -66,7 +66,6 @@ const Login = () => {
           showSuccessMessage: false,
         }));
       } 
-
       else {
         let jwtToken = res.data.jwtToken;
         const token = `Bearer ${jwtToken}`;
@@ -86,12 +85,20 @@ const Login = () => {
             ...prevState,
             showSuccessMessage: false,
           }));
-        } else if (response.data === "USER") {
+        } 
+        else if (response.data === "USER") {
           AuthenticationService.registerSuccessfulLoginUser(
             credentials.username
           );
           navigate("/user-home");
         }
+        else if (response.data === "ADMIN") {
+          AuthenticationService.registerSuccessfulLoginAdmin(
+            credentials.username
+          );
+          navigate("/admin-home");
+        }
+
       }
     }
   };

@@ -5,8 +5,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import UserAccountDeleteService from "../../../../api/users/DeleteAccountService.js"
-import AuthenticationService from "../../../../api/authentication/AuthenticationService"
+import UserAccountDeleteService from "../../../api/users/DeleteAccountService.js"
+import AuthenticationService from "../../../api/authentication/AuthenticationService"
 
 export default function DeleteAccountPopUp() {
   const [open, setOpen] = React.useState(false);

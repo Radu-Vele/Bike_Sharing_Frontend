@@ -7,17 +7,17 @@ import { Button } from "@mui/material";
 
 
 const availableMarker = new L.Icon({
-    iconUrl: require("../../../img/green_marker.png"),
+    iconUrl: require("../../img/green_marker.png"),
     iconSize: [45, 45],
 })
 
 const fullMarker = new L.Icon({
-    iconUrl: require("../../../img/red_marker.png"),
+    iconUrl: require("../../img/red_marker.png"),
     iconSize: [45, 45],
 })
 
 const emptyMarker = new L.Icon({
-    iconUrl: require("../../../img/grey_marker.png"),
+    iconUrl: require("../../img/grey_marker.png"),
     iconSize: [45, 45],
 })
 

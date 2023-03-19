@@ -4,8 +4,8 @@ import Button from '@mui/material/Button';
 import { Typography, Dialog } from '@mui/material';
 import { useState, useLayoutEffect } from 'react';
 import { useEffect } from 'react';
-import FinishRideService from "../../../api/system/FinishRideService";
-import UserDetailsService from "../../../api/users/UserDetailsService";
+import FinishRideService from "../../api/system/FinishRideService";
+import UserDetailsService from "../../api/users/UserDetailsService";
 import moment from "moment"
 import FeedbackForm from "./FeedbackForm";
 

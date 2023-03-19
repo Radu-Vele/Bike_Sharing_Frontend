@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import EditAccountService from "../../../../api/users/EditAccountService";
+import EditAccountService from "../../../api/users/EditAccountService";
 import Container from "@mui/system/Container";
 import { Typography } from "@mui/material";
 import { Box }from "@mui/system";

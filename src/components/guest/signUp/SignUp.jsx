@@ -1,15 +1,14 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SignUpAppClientService from "../../../../api/signup/SignUpAppClientService";
+import SignUpService from "../../../api/signup/SignUpService";
 import { TextField } from "@mui/material"
 import { Container } from "@mui/system";
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
-//TODO: make it with a good font
-const SignUp = () => {
+const SignUp = (signupAdmin) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -54,8 +53,8 @@ const SignUp = () => {
       errors.password_err = true;
     }
     if (!info.repeatpassword) {
-      errors.repeatpassword = "Repeate";
-      errors.repeatpassword_err = "Repeate";
+      errors.repeatpassword = "Repeat";
+      errors.repeatpassword_err = "Repeat";
     }
     if (info.password !== info.repeatpassword) {
       errors.repeatpassword = "Passwords don't match";
@@ -66,7 +65,7 @@ const SignUp = () => {
       errors.phoneNumber = "Required";
     } else if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(info.phoneNumber)) {
       errors.phoneNumber = "Invalid phone number";
-      errors.phoneNumber_err = "Repeate";
+      errors.phoneNumber_err = "Repeat";
     }
 
     return errors;
@@ -79,9 +78,9 @@ const SignUp = () => {
     setErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      console.log(info);
       setLoading(true);
-      await SignUpAppClientService(info)
+
+      await SignUpService(info, signupAdmin)
         .then((response) => {
           if (response.status === 201) {
             navigate("/login");
@@ -103,10 +102,6 @@ const SignUp = () => {
     </Typography >
     <Typography hidden={!error} color="red">
       Invalid signup
-    </Typography >
-
-    <Typography hidden={!error} color="red">
-      Signup successful
     </Typography >
 
     <Box component="form" onSubmit={submitHandler} noValidate sx={{ mt: 1 }}>

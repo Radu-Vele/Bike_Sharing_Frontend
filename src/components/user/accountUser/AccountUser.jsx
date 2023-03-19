@@ -1,5 +1,5 @@
 import React from "react";
-import UserDetailsService from "../../../../api/users/UserDetailsService";
+import UserDetailsService from "../../../api/users/UserDetailsService";
 import { useState, useLayoutEffect } from "react";
 import EditAccount from "./EditAccount"
 import DeletePopUp from "../../fragments/popUps/DeleteAccountPopUp";
