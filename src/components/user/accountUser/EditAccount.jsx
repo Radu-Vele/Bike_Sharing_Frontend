@@ -1,7 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
 import EditAccountService from "../../../api/users/EditAccountService";
 import Container from "@mui/system/Container";
 import { Typography } from "@mui/material";
@@ -10,7 +8,6 @@ import { TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox } from "@mui/material";
 import {FormGroup , FormControlLabel} from "@mui/material";
-import { useEffect } from "react";
 
 const EditAccount = (user) => {
     const [phoneChecked, setPhoneChecked] = useState(false);  
@@ -22,7 +19,6 @@ const EditAccount = (user) => {
         legalName: user.currAccount.legalName,
         phoneNumber: user.currAccount.phoneNumber,
     });
-    //useEffect(() => {setInfo({...info, legalName: user.currAccount.legalName, phoneNumber: user.currAccount.phoneNumber})})
 
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -91,6 +87,7 @@ const EditAccount = (user) => {
                 window.location.reload(false);
             }
             else {
+              //add sumbit error display
               setLoading(false);
               console.log(errors);
             }

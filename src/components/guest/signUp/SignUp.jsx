@@ -12,6 +12,8 @@ const SignUp = (signupAdmin) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState(false);
   const [info, setInfo] = useState({
     username: "",
     legalName: "",
@@ -21,16 +23,14 @@ const SignUp = (signupAdmin) => {
     repeatpassword: "",
   });
 
-  const [errors, setErrors] = useState({});
-
   const validate = () => {
     const errors = {};
 
     if (!info.username) {
       errors.username = "Required";
       errors.username_err = true;
-
-    } else if (info.username.length < 5) {
+    } 
+    else if (info.username.length < 5) {
       errors.username = "Minimum 5 char";
       errors.username_err = true;
     }
@@ -38,7 +38,8 @@ const SignUp = (signupAdmin) => {
     if (!info.legalName) {
       errors.legalName = "Required";
       errors.legalName_err = true;
-    } else if (info.legalName.length < 2 || info.legalName.length > 20) {
+    } 
+    else if (info.legalName.length < 2 || info.legalName.length > 20) {
       errors.legalName = "2 to 20 char";
       errors.legalName_err = true;
     }
@@ -53,19 +54,21 @@ const SignUp = (signupAdmin) => {
       errors.password_err = true;
     }
     if (!info.repeatpassword) {
-      errors.repeatpassword = "Repeat";
-      errors.repeatpassword_err = "Repeat";
+      errors.repeatpassword = "Password repetation is required.";
+      errors.repeatpassword_err = true;
     }
     if (info.password !== info.repeatpassword) {
       errors.repeatpassword = "Passwords don't match";
-      errors.repeatpassword_err = "Repeate";
+      errors.repeatpassword_err = true;
     }
     
     if(!info.phoneNumber) {
       errors.phoneNumber = "Required";
-    } else if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(info.phoneNumber)) {
+      errors.phoneNumber_err = true;
+    } 
+    else if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(info.phoneNumber)) {
       errors.phoneNumber = "Invalid phone number";
-      errors.phoneNumber_err = "Repeat";
+      errors.phoneNumber_err = true;
     }
 
     return errors;
@@ -75,6 +78,10 @@ const SignUp = (signupAdmin) => {
     event.preventDefault();
     let errors = validate(info);
     
+    //hide labels
+    setSuccess(false);
+    setError(false);
+
     setErrors(errors);
 
     if (Object.keys(errors).length === 0) {
@@ -83,7 +90,14 @@ const SignUp = (signupAdmin) => {
       await SignUpService(info, signupAdmin)
         .then((response) => {
           if (response.status === 201) {
-            navigate("/login");
+            if(!signupAdmin) {
+              navigate("/login");
+            }
+            else {
+              setError(false);
+              setLoading(false);
+              setSuccess(true);
+            }
           }
         })
         .catch((err) => {
@@ -100,8 +114,13 @@ const SignUp = (signupAdmin) => {
     <Typography component="h1" variant="h5">
           Sign up
     </Typography >
-    <Typography hidden={!error} color="red">
+
+    <Typography hidden={!error} color="error">
       Invalid signup
+    </Typography >
+
+    <Typography hidden={!success} color="green">
+      A new admin was added successfully, you may now leave this page.
     </Typography >
 
     <Box component="form" onSubmit={submitHandler} noValidate sx={{ mt: 1 }}>
@@ -175,7 +194,7 @@ const SignUp = (signupAdmin) => {
             required
             fullWidth
             name="password"
-            label="Repeate Password"
+            label="Repeat Password"
             type="password"
             id="password"
             autoComplete="current-password"

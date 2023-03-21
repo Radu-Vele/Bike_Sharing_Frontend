@@ -18,14 +18,13 @@ export default function RidesTable() {
   const [rows, setRows] = useState([]);
 
   function createData(
-    id,
     s_time,
-    s_station_id,
+    s_station_name,
     e_time,
-    e_station_id,
+    e_station_name,
     bike_id
   ) {
-    return {id, s_time, s_station_id, e_time, e_station_id, bike_id};
+    return {s_time, s_station_name, e_time, e_station_name, bike_id};
   }
   
   function trimDate(timestamp) {
@@ -36,7 +35,11 @@ export default function RidesTable() {
 
   function populateTable(response) {
     for(let i = 0; i < response.data.length; i++) {
-      rows.push(createData(response.data[i].id,trimDate(response.data[i].startTime),response.data[i].startStationId,trimDate(response.data[i].endTime),response.data[i].endStationId,response.data[i].bikeId));
+      rows.push(createData(trimDate(response.data[i].startTime),
+        response.data[i].startStationName,
+        trimDate(response.data[i].endTime),
+        response.data[i].endStationName,
+        response.data[i].bikeExternalId));
     }
   }
 
@@ -100,7 +103,6 @@ export default function RidesTable() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Ride ID</TableCell>
               <TableCell align="right">Start Time</TableCell>
               <TableCell align="right">Start Station</TableCell>
               <TableCell align="right">Finish Time</TableCell>
@@ -114,13 +116,10 @@ export default function RidesTable() {
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
                 <TableCell align="right">{row.s_time}</TableCell>
-                <TableCell align="right">{row.s_station_id}</TableCell>
+                <TableCell align="right">{row.s_station_name}</TableCell>
                 <TableCell align="right">{row.e_time}</TableCell>
-                <TableCell align="right">{row.e_station_id}</TableCell>
+                <TableCell align="right">{row.e_station_name}</TableCell>
                 <TableCell align="right">{row.bike_id}</TableCell>
               </TableRow>
             ))}

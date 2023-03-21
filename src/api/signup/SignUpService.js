@@ -14,7 +14,6 @@ function createSignupBody(user) {
 const SignUpService = (user, isAdmin) => {
   try {
     if(isAdmin.signUpAdmin) {
-      console.log("got to the point I send the request");
       return axios.post(`/signup-admin`, createSignupBody(user));
     }
     else {

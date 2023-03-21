@@ -1,11 +1,7 @@
-import React from "react";
 import axios from "../customAxiosConfig/CustomAxiosConfig";
-import AuthenticationService from "../authentication/AuthenticationService";
 
 const EditAccountService = (info) => {
-    let username = AuthenticationService.getLoggedInUser();
     let userBody = {
-        username:username,
         legalName:info.legalName,
         phoneNumber:info.phoneNumber
     }

@@ -1,16 +1,10 @@
 import axios from "../customAxiosConfig/CustomAxiosConfig"
-import AuthenticationService from "../authentication/AuthenticationService"
 
 const UserDetailsService = () => {
-    let username = AuthenticationService.getLoggedInUser();
 
     //perform a delete request
     try{
-        return axios.delete('/delete-account', {
-            params: {
-                username,
-            },
-        });
+        return axios.delete('/delete-account');
     } catch (err) {
         let error = "";
         if(err.response) {
