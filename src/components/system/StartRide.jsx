@@ -130,6 +130,7 @@ const StartRide = () => {
 
                     arr.push(temp);
                 }
+                console.log(arr);
                 setBikeData(arr);
             }
         }

@@ -8,8 +8,8 @@ const FeedbackForm = (hook) => {
 
     const [user, setUser] = useState({});
     const [info, setInfo] = useState({
-        bikeId: 0,
-        currentRating: 10
+        externalId: 0,
+        givenRating: 10
     });
 
     useLayoutEffect(() => {
@@ -32,8 +32,8 @@ const FeedbackForm = (hook) => {
             return false;
         }
         else {
-            info.currentRating = givenRating;
-            info.bikeId = user.currentRide.bikeId;
+            info.givenRating = givenRating;
+            info.externalId = user.currentRide.bikeExternalId;
             return true;
         }
     }
