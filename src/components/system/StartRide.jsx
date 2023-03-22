@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Button, Typography, Modal, Box } from '@mui/material';
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import StartRideService from "../../api/system/StartRideService";
-import AuthenticationService from "../../api/authentication/AuthenticationService";
 import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
 import { Container } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
@@ -22,49 +21,39 @@ const style = {
     p: 4,
   };
 
+//TODO: Make sure to use a correct way of handling the hooks
 const StartRide = () => {
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openError, setOpenError] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
-
     // Arrays of data retrieved through calls
-    const [stationData, setStationData] = useState([]);
+    const [stationData, setStationData] = useState([]); //station names
     const [endStationData, setEndStationData] = useState([]);
     const [bikeData, setBikeData] = useState([]);
-    const [user, setUser] = useState({});
     const [hidePage, setHidePage] = useState(false);
 
     // Data retrieved from the UI
     const [chosenStation, setChosenStation] = useState('');
-    const [chosenStationId, setChosenStationId] = useState('');
     const [chosenBike, setChosenBike] = useState('');
     const [chosenEnd, setChosenEnd] = useState('');
-    const [chosenEndId, setChosenEndId] = useState('');
-
-    //Logged in user
-    const username = AuthenticationService.getLoggedInUser();
 
     // Info for the init ride call
     const [info, setInfo] = useState({
-        username: username,
-        startStationId: "",
-        endStationId: "",
-        bikeId: ""
+        startStationName: "",
+        endStationName: "",
+        bikeExternalId: ""
     });
 
-    // Retrieve usable stations
     const getStations = async () => {
         try {
-            const response = await axios.get("/get-usable-stations");
+            const response = await axios.get("/get-start-stations");
             let arr = [];
             if (response.data.length > 0) {
                 let availableStartStations = response.data;
                 for (const iterator of availableStartStations) {
                     let temp = {
                         name: iterator.name,
-                        id: iterator.id
                     };
 
                     arr.push(temp);
@@ -80,14 +69,13 @@ const StartRide = () => {
             return error;
         }
     };
-    //executed at component mount
+
     useLayoutEffect(() => {
         let unmounted = false;
         
         UserDetailsService().then((response) => {
             if(!unmounted) {
-                setUser(response.data);
-                setHidePage(response.data.activeRide); //don't show page if the use has an active ride
+                setHidePage(response.data.hasActiveRide);
             }
           });
         
@@ -106,19 +94,19 @@ const StartRide = () => {
     const validate = () => { //TODO: check if well defined
         const errors = {};
 
-        if (info.startStationId === '') {
-            errors.startStationId_error = true;
-            errors.startStationId = "Please choose a start station!";
+        if (info.startStation === '') {
+            errors.startStationName_error = true;
+            errors.startStationName = "Please choose a start station!";
         }
 
-        if (info.bikeId === '') {
-            errors.bikeId_error = true;
-            errors.bikeId = "Please choose a bike from your start station!";
+        if (info.bikeExternalId === '') {
+            errors.bikeExternalId_error = true;
+            errors.bikeExternalId = "Please choose a bike from your start station!";
         }
 
-        if (info.endStationId === '') {
-            errors.endStationId_error = true;
-            errors.endStationId = "Please choose an end station!";
+        if (info.endStation === '') {
+            errors.endStationName_error = true;
+            errors.endStationName = "Please choose an end station!";
         }
 
         return errors;
@@ -126,15 +114,17 @@ const StartRide = () => {
 
 
 
-    const getBikes = async () => { //works well
+    const getBikes = async () => {
         try {
-            const response = await axios.get("/get-usable-bikes?stationId=" + chosenStationId);
+            var request = "/get-usable-bikes?stationName=" + chosenStation;
+
+            const response = await axios.get(request);
             let arr = [];
             if (response.data.length > 0) {
                 let availableUsableBikes = response.data;
                 for (const iterator of availableUsableBikes) {
                     let temp = {
-                        id: iterator.id,
+                        externalId: iterator.externalId,
                         rating: iterator.rating
                     };
 
@@ -154,19 +144,19 @@ const StartRide = () => {
 
     const getEndStations = async () => {
         try {
-            const response = await axios.get("/get-free-stations");
+            const response = await axios.get("/get-end-stations");
             let arr = [];
             if (response.data.length > 0) {
                 let availableEndStations = response.data;
                 for (const iterator of availableEndStations) {
                     let temp = {
                         name: iterator.name,
-                        id: iterator.id
                     };
                     if(temp.name !== chosenStation) { //do not show the start station as an option
                         arr.push(temp);
                     }
                 }
+
                 setEndStationData(arr);
             }
         }
@@ -181,9 +171,6 @@ const StartRide = () => {
     };
 
     const submitHandler = async (event) => {
-
-        console.log(info);
-
         event.preventDefault();
 
         let errors = validate(info);
@@ -208,58 +195,37 @@ const StartRide = () => {
     };
     
     const handleChange1 = (event) => {
-        //set chosen station name
         setChosenStation(event.target.value);
-        
-        //set chosen Station ID
-        let chosenId  = 0;
-
-        for (let i = 0; i < stationData.length; i++) {
-            if(event.target.value === stationData[i].name) {
-                chosenId = stationData[i].id;
-            }
-        }
-
-        setChosenStationId(chosenId);
         
         // clear other fields and info regarding the bike and end station
         setChosenBike('');
         setChosenEnd('');
-        setInfo({ ...info, startStationId: chosenId, bikeId: 0, endStationId: 0});
+        setInfo({ ...info, startStationName: event.target.value, bikeExternalId: 0, endStationName: 0});
     }
 
     const handleChange2 = (event) => {
         setChosenBike(event.target.value);
-        setInfo({ ...info, bikeId: event.target.value });
+        setInfo({ ...info, bikeExternalId: event.target.value });
     }
 
 
     const handleChange3 = (event) => {
         setChosenEnd(event.target.value);
-        let chosenId = 0;
-
-        for (let i = 0; i < endStationData.length; i++) {
-            if(event.target.value === endStationData[i].name) {
-                chosenId = endStationData[i].id;
-            }
-        }
-        console.log(chosenId)
-        setChosenStationId(chosenId);
-        setInfo({ ...info, endStationId: chosenId});
+        setInfo({ ...info, endStationName: event.target.value});
     }
 
 
     //Map from station Data to Menu item
     const menuItemsStations = stationData.map((item) => (
-        <MenuItem key={item.id} value={item.name}> {item.name} </MenuItem>
+        <MenuItem key={item.name} value={item.name}> {item.name} </MenuItem>
     ));
 
     const menuItemsBikes = bikeData.map((item, i) => (
-        <MenuItem key={i} value={item.id}> {" - id: " + item.id.toString() + " - rating: " + item.rating.toString()} </MenuItem>
+        <MenuItem key={i} value={item.externalId}> {"id: " + item.externalId.toString() + " --> rating: " + item.rating.toString()} </MenuItem>
     ));
 
     const menuItemsEnd = endStationData.map(item => (
-        <MenuItem key={item.id} value={item.name}> {item.name} </MenuItem>
+        <MenuItem key={item.name} value={item.name}> {item.name} </MenuItem>
     ));
 
     return (

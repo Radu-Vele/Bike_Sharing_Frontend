@@ -20,7 +20,6 @@ const Header = () => {
   const userLogged = AuthenticationService.isUserLoggedIn();
   const adminLogged = AuthenticationService.isAdminLoggedIn();
 
-  const location = useLocation();
   const navigate = useNavigate();
   const label = "-"; //?
 
@@ -110,7 +109,7 @@ const Header = () => {
     { adminLogged && (
       <FormGroup>
         <FormControlLabel
-          control={<Switch {...label} color='secondary' onChange={handleSwitchToggle} />}
+          control={<Switch {...label} color='primary' onChange={handleSwitchToggle} />} //TODO: Change color
           label={mode4Admin}
         />
       </FormGroup>

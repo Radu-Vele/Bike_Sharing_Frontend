@@ -23,7 +23,7 @@ const emptyMarker = new L.Icon({
 
 const BasicMap = (stationsArray) => {
 
-    const [centerLocation, setCenterLocation] = useState({lat: 46.77223350278075, lng: 23.585195329308466}) //init at AC
+    const [centerLocation, setCenterLocation] = useState({lat: 46.77223350278075, lng: 23.585195329308466})
     const ZOOM_LEVEL = 18;
 
     const mapRef = useRef();
@@ -43,9 +43,8 @@ const BasicMap = (stationsArray) => {
     }
 
     const fun = function() {
-        console.log(stationsArray);
         const arr = stationsArray.stationsArray.map(item => (
-            <Marker position={[item.xcoordinate, item.ycoordinate]} icon={chooseColor(item.bikeList.length, item.maximumCapacity)}>
+            <Marker position={[item.latitude, item.longitude]} icon={chooseColor(item.bikeList.length, item.maximumCapacity)}>
                 <Popup>
                     Station: {item.name}
                     <br></br>
@@ -54,7 +53,6 @@ const BasicMap = (stationsArray) => {
                     Capacity: {item.maximumCapacity}
                 </Popup>
             </Marker>
-            
         )
         );
         setMarkers(arr);
@@ -76,11 +74,6 @@ const BasicMap = (stationsArray) => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=1Lk3zVWEbHf7oKZYoIri"
             />
-            {/* <Marker position={[46.77223350278075,23.585195329308466]} icon={availableMarker}>
-                <Popup>
-                    UTCN AC
-                </Popup>
-            </Marker> */}
             {markers}
     </MapContainer>
     
