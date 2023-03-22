@@ -1,14 +1,9 @@
 import React from "react";
 import axios from "../customAxiosConfig/CustomAxiosConfig";
 
-const FinishRideService = (rideId) => {
+const FinishRideService = () => {
   try {
-    return axios.put("/end-ride", null, { 
-      params: { 
-        rideId,
-      },
-    });
-
+    return axios.put("/end-ride");
   } catch (err) {
     let error = "";
     if (err.response) {

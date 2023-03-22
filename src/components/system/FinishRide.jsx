@@ -25,7 +25,7 @@ const FinishRide = () => {
         UserDetailsService().then((response) => {
           if(!unmounted) {
               setUser(response.data);
-              setTempHasActiveRide(response.data.activeRide);
+              setTempHasActiveRide(response.data.inActiveRide);
               setRideStartTime(response.data.currentRide.startTime.substring(11,19));
               setRecommendedRoute(response.data.currentRide.recommendation.substring(19));
           }
@@ -56,9 +56,9 @@ const FinishRide = () => {
         .format("mm:ss");
     
     const handleFinishRide = async (event) => {
-        await FinishRideService(user.currentRide.id)
+        await FinishRideService()
         .then((response) => {
-          if (response.status === 201) {
+          if (response.status === 200) {
             setSuccess(true);
             setOpenFbDialog(true);
             setTempHasActiveRide(false);
@@ -137,7 +137,7 @@ const FinishRide = () => {
                 maxWidth="lg"
             >
                 <FeedbackForm 
-                    hook={[openFbDialog, setOpenFbDialog]} 
+                    hook={[openFbDialog, setOpenFbDialog]}
                 /> {/* Is this even legal?*/}
             </Dialog>
     </Box>
