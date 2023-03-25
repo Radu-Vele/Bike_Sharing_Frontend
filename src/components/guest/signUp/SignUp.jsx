@@ -120,7 +120,7 @@ const SignUp = (signupAdmin) => {
     </Typography >
 
     <Typography hidden={!success} color="green">
-      A new admin was added successfully, you may now leave this page.
+      A new user was added successfully, you may now leave this page.
     </Typography >
 
     <Box component="form" onSubmit={submitHandler} noValidate sx={{ mt: 1 }}>
