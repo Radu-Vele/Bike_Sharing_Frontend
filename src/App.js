@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { styled, ThemeProvider, creteMuiTheme } from '@mui/material/styles';
+import { styled, ThemeProvider } from '@mui/material/styles';
 import Header from "./components/fragments/header/Header";
 import Home from "./components/guest/home/Home";
 import SignUp from "./components/guest/signUp/SignUp";
@@ -15,6 +15,7 @@ import UserHome from './components/user/UsersHome';
 import myTheme from './theme/AppTheme';
 import StartRide from './components/system/StartRide';
 import AdminHome from './components/admin/AdminHome';
+import ManageBikesStations from './components/admin/ManageBikesStations.jsx';
 
 const drawerWidth = 240;
 
@@ -62,6 +63,7 @@ function App() {
               <Route element={<ProtectedRouteAdmin />}>
                 <Route path="/admin-home" element={<AdminHome />} />
                 <Route path="/new-admin" element ={<SignUp signUpAdmin={true} />} />
+                <Route path="/manage-bikes-stations" element={<ManageBikesStations/>} />
               </Route>
             </Routes>
           </ThemeProvider>

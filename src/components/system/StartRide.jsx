@@ -222,8 +222,8 @@ const StartRide = () => {
     ));
 
     const menuItemsBikes = bikeData.map((item, i) => (
-        <MenuItem key={i} value={item.externalId}> {"id: " + item.externalId.toString() + " --> rating: " + item.rating.toString()} </MenuItem>
-    ));
+        <MenuItem key={i} value={item.externalId}> {"Bike: " + item.externalId.toString() + " [ " + (item.rating === 0 ? "Fresh Bike": "Rating = " + item.rating.toString()) + ' ]'} </MenuItem>
+    )); 
 
     const menuItemsEnd = endStationData.map(item => (
         <MenuItem key={item.name} value={item.name}> {item.name} </MenuItem>

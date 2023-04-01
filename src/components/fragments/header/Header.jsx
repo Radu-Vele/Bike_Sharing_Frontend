@@ -1,8 +1,8 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import style_nav from "../../../css/Navlink.module.css";
-import { Box, Switch, FormGroup, FormControlLabel } from "@mui/material";
-import AppBar from '@mui/material/AppBar';
+import { Box, Switch, FormGroup, FormControlLabel, ClickAwayListener, MenuItem } from "@mui/material";
+import { AppBar, Popper, Paper, MenuList, Grow } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -10,7 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
 import { NavLink } from "react-router-dom";
 import AuthenticationService from "../../../api/authentication/AuthenticationService";
-import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -19,6 +18,8 @@ const Header = () => {
   const [mode4Admin, setMode4Admin] = useState("Admin Mode");
   const userLogged = AuthenticationService.isUserLoggedIn();
   const adminLogged = AuthenticationService.isAdminLoggedIn();
+  const [openActions, setOpenActions] = useState(false);
+  const anchorRef = useRef(null);
 
   const navigate = useNavigate();
   const label = "-"; //?
@@ -35,6 +36,18 @@ const Header = () => {
       navigate("/admin-home");
     }
   }
+
+  const handleToggle = () => {
+    setOpenActions((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpenActions(false);
+  };
 
   return (
     <Box component="main" maxWidth="xs" >
@@ -86,30 +99,86 @@ const Header = () => {
     
     {(adminLogged && !adminInUserMode) && (
       <>
-          <Button color="inherit">
+          <Button 
+            color="inherit"
+          >
             <NavLink 
             to="/admin-home"
             className={style_nav.nav_link_default} 
             activeClassName={style_nav.nav_link_active}
             >
-              Home </NavLink>
+              Home 
+            </NavLink>
           </Button>
 
-          <Button color="inherit">
-            <NavLink 
-            to="/new-admin"
-            className={style_nav.nav_link_default} 
-            activeClassName={style_nav.nav_link_active}
-            >
-              New Admin</NavLink>
+          <Button 
+            ref={anchorRef}
+            id="menu-list-button"
+            aria-controls={openActions ? 'menu-list' : undefined}
+            aria-expanded={openActions ? 'true' : undefined}
+            aria-haspopup={true}
+            color="inherit"
+            onClick={handleToggle}>
+            Actions
           </Button>
+
+          <Popper
+            open={openActions}
+            anchorEl={anchorRef.current}
+            role={undefined}
+            placement="bottom-start"
+            transition
+            disablePortal
+          >
+            {( { TransitionProps, placement}) => (
+              <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === 'bottom-start' ? 'left top' : 'left bottom',
+              }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList
+                      autoFocusItem={openActions}
+                      id="menu-list"
+                      aria-labelledby="menu-list-button"
+                    >
+                      <MenuItem onClick={handleClose}>
+                        <NavLink 
+                        to="/manage-bikes-stations"
+                        >
+                          Manage Bikes & Stations
+                        </NavLink>
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <NavLink 
+                        to="/manage-users"
+                        >
+                          Manage Users
+                        </NavLink>
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <NavLink 
+                        to="/new-admin"
+                        >
+                          New Admin
+                        </NavLink>
+                      </MenuItem>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
       </>
     )}
 
     { adminLogged && (
       <FormGroup>
         <FormControlLabel
-          control={<Switch {...label} color='primary' onChange={handleSwitchToggle} />} //TODO: Change color
+          control={<Switch {...label} color='secondary' onChange={handleSwitchToggle} />} //TODO: Change color
           label={mode4Admin}
         />
       </FormGroup>
