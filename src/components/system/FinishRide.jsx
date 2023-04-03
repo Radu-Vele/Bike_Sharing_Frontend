@@ -19,25 +19,18 @@ const FinishRide = () => {
     const [openFbDialog, setOpenFbDialog] = useState(false);
     const [recommendedRoute, setRecommendedRoute] = useState("");
 
-    useLayoutEffect(() => {
-        let unmounted = false;
-      
+    useEffect(() => {
         UserDetailsService().then((response) => {
-          if(!unmounted) {
-              setUser(response.data);
-              setTempHasActiveRide(response.data.inActiveRide);
-              setRideStartTime(response.data.currentRide.startTime.substring(11,19));
-              setRecommendedRoute(response.data.currentRide.recommendation.substring(19));
-          }
+            setUser(response.data);
+            setTempHasActiveRide(response.data.inActiveRide);
+            setRideStartTime(response.data.currentRide.startTime.substring(11,19));
+            setRecommendedRoute("TBA");
         });
-        return () => {
-          unmounted = true;
-        };
     }, [])
 
     useEffect( () => {
-        var timer = setInterval(() => setDate(new Date()), 1000)
-
+        var timer = setInterval(() => setDate(new Date()), 1000);
+        console.log(rideStartTime);
         return function cleanup() {
             clearInterval(timer);
         }

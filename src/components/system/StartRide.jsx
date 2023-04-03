@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { Button, Typography, Modal, Box } from '@mui/material';
-import { useState, useLayoutEffect } from 'react';
+import { Button, Typography, Modal, Box, Grid, Divider } from '@mui/material';
+import { useState, useEffect } from 'react';
 import StartRideService from "../../api/system/StartRideService";
 import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
-import { Container } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import UserDetailsService from '../../api/users/UserDetailsService';
+import RoundedShadowBox from '../../custom_components/RoundedShadowBox';
 
 const style = {
     position: 'absolute',
@@ -70,12 +70,12 @@ const StartRide = () => {
         }
     };
 
-    useLayoutEffect(() => { //TODO: Modify to hide the page after a ride has started
+    useEffect(() => { //TODO: Modify to hide the page after a ride has started
         let unmounted = false;
         
         UserDetailsService().then((response) => {
             if(!unmounted) {
-                setHidePage(response.data.hasActiveRide);
+                setHidePage(response.data.inActiveRide);
             }
           });
         
@@ -232,85 +232,84 @@ const StartRide = () => {
     return (
     <>
     <div hidden={hidePage}>
-    <Box maxWidth='xs' 
-        sx={{ fontWeight: 'light', typography: 'body1' }}
-        borderRadius={7} 
-        boxShadow={3} 
-        bgcolor="background.paper" 
-        p={3}
-        justifyContent="center"
-        alignItems="center"
-        width={"70%"}
-    >
-        <Typography component="h1" variant="h5">
-            Pick up a bike
-        </Typography >
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-        <InputLabel id="chosen-station-id">Start station</InputLabel>
-            <Select
-                labelId="chosen-station-id"
-                id="chosen-station"
-                value={chosenStation}
-                onChange={handleChange1}
-                label="Choose station"
-            >
-                {menuItemsStations}
-            </Select>
-        </FormControl>
-        <br></br>
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-            <InputLabel id="chosen-bike-id">Choose bike</InputLabel>
-            <Select
-                labelId="chosen-bike-id"
-                id="chosen-bike"
-                value={chosenBike}
-                label="Choose bike"
-                onOpen={getBikes}
-                onChange={handleChange2}
-            >
-                {menuItemsBikes}
-            </Select>
-        </FormControl>
-        <br></br>
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-            <InputLabel id="chosen-end-station-id">End station</InputLabel>
-            <Select
-                labelId="chosen-end-station-id"
-                id="chosen-end-station"
-                value={chosenEnd}
-                label="Choose station"
-                onOpen={getEndStations}
-                onChange={handleChange3}
-            >
-                {menuItemsEnd}
-            </Select>
-        </FormControl>
-        <br></br>
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-            <Button
-                onClick={submitHandler}
-                variant="contained"
-                color="secondary"
-            >
-                Start Your Ride
-            </Button>
-        </FormControl>
-        <br></br>
-        <Modal
-                open={openError}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                onClose={() => {setOpenError(false)}}
-            >
-                <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" textAlign="center">
-                        You cannot start a ride!
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 } } textAlign="center">
-                        Please verify your inputs!
-                    </Typography>
-                </Box>
-        </Modal>
+        <Grid container spacing={2} p={2}>
+            <Grid item xs={3}></Grid>
+            <Grid item xs={6}>
+                <RoundedShadowBox
+                    display="flex"
+                    flexDirection="column"
+                >
+                    <Typography component="h1" variant="h5">
+                        Pick up a bike
+                    </Typography >
+                    <Divider/>
+                    <br></br>
+                    <FormControl sx={{ m: 1, minWidth: 300 }}>
+                    <InputLabel id="chosen-station-id">Start station</InputLabel>
+                        <Select
+                            labelId="chosen-station-id"
+                            id="chosen-station"
+                            value={chosenStation}
+                            onChange={handleChange1}
+                            label="Choose station"
+                            >
+                            {menuItemsStations}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 300 }}>
+                        <InputLabel id="chosen-bike-id">Choose bike</InputLabel>
+                        <Select
+                            labelId="chosen-bike-id"
+                            id="chosen-bike"
+                            value={chosenBike}
+                            label="Choose bike"
+                            onOpen={getBikes}
+                            onChange={handleChange2}
+                        >
+                            {menuItemsBikes}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 300 }}>
+                        <InputLabel id="chosen-end-station-id">End station</InputLabel>
+                        <Select
+                            labelId="chosen-end-station-id"
+                            id="chosen-end-station"
+                            value={chosenEnd}
+                            label="Choose station"
+                            onOpen={getEndStations}
+                            onChange={handleChange3}
+                            >
+                            {menuItemsEnd}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 300 }}>
+                        <Button
+                            onClick={submitHandler}
+                            variant="contained"
+                            color="secondary"
+                            >
+                            Start Your Ride
+                        </Button>
+                    </FormControl>
+                </RoundedShadowBox>
+                <Modal
+                        open={openError}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        onClose={() => {setOpenError(false)}}
+                        >
+                        <Box sx={style}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2" textAlign="center">
+                                You cannot start a ride!
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 } } textAlign="center">
+                                Please verify your inputs!
+                            </Typography>
+                        </Box>
+                </Modal>
+            </Grid>
+            <Grid item xs={3}></Grid>
+        </Grid>
         <Modal
                 open={openSuccess}
                 onClose={() => {
@@ -329,10 +328,9 @@ const StartRide = () => {
                     </Typography>
                 </Box>
         </Modal>
-    </Box>
     </div>
     <div hidden={!hidePage}>
-        <Typography align='center' color="error">
+        <Typography variant="h5" align='center' color="error">
             You can't pick up a new bike while you're having an active ride!
         </Typography>
     </div>

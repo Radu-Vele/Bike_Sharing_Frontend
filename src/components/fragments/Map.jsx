@@ -41,7 +41,6 @@ const BasicMap = (stationsArray) => {
         }
 
     }
-
     const fun = function() {
         const arr = stationsArray.stationsArray.map(item => (
             <Marker position={[item.latitude, item.longitude]} icon={chooseColor(item.bikeList.length, item.maximumCapacity)}>
@@ -57,6 +56,11 @@ const BasicMap = (stationsArray) => {
         );
         setMarkers(arr);
     }
+
+    useEffect(() => {
+        fun();
+    },[stationsArray])
+
 
     return (
     <>

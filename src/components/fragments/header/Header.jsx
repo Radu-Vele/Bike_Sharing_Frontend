@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { NavLink } from "react-router-dom";
 import AuthenticationService from "../../../api/authentication/AuthenticationService";
 import { useNavigate } from "react-router-dom";

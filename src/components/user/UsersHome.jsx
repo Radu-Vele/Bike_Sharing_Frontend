@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Divider, Typography } from "@mui/material"
+import { Box, Divider, Grid, Typography } from "@mui/material"
 import MyRideDrawer from "../fragments/drawer/Drawer";
 import BasicMap from "../fragments/Map"
 import { Container } from "@mui/system";
 import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
 import { useState, useEffect } from 'react';
+import RoundedShadowBox from "../../custom_components/RoundedShadowBox";
 
 const UserHome = () => {
 
@@ -23,50 +24,33 @@ const UserHome = () => {
   }
 
 useEffect( () => {
-    let unmounted = false;
-    
     retrieveStations().then((response) => {
-        if(!unmounted) {
-            setStationData(response.data);
-        }
+            setStationData(response.data);  
       });
-
-    return () => {
-        unmounted = true;
-      };
   }, [])
 
 
   return (
-    <Box
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Grid p={2} container spacing={2}>
+      <Grid item xs={12}>
         <Typography variant = "h5" align="center">
           Hello and welcome to the Bike Sharing App Home Page!
         </Typography>
-        <br></br>
-        <MyRideDrawer />
-        <br></br>
-        <Divider />
-        <br></br>
-        <Box
-          borderRadius={7} 
-          boxShadow={3} 
-          bgcolor="background.paper" 
-          p={3}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          width={"70%"}
-        >
+        <Divider/>
+      </Grid>
+      <Grid item xs={12}>
+          <MyRideDrawer />
+      </Grid>
+      <Grid item xs={1}></Grid>
+      <Grid item xs={10}>
+        <RoundedShadowBox>
           <Container align="center" maxWidth="m">
             <BasicMap stationsArray={stationData}/>
           </Container>
-        </Box>
-
-        
-    </Box>
+        </RoundedShadowBox>
+      </Grid>
+      <Grid item xs={1}></Grid>
+    </Grid>
   );
 };
 
