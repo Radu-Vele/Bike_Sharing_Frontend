@@ -8,14 +8,16 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { NavLink } from "react-router-dom";
 import AuthenticationService from "../../../api/authentication/AuthenticationService";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { AdminPanelSettings } from "@mui/icons-material";
 
 const Header = () => {
   const [adminInUserMode, setAdminInUserMode] = useState(false);
-  const [mode4Admin, setMode4Admin] = useState("Admin Mode");
   const userLogged = AuthenticationService.isUserLoggedIn();
   const adminLogged = AuthenticationService.isAdminLoggedIn();
   const [openActions, setOpenActions] = useState(false);
@@ -27,12 +29,10 @@ const Header = () => {
   const handleSwitchToggle = (event) => {
     if(event.target.checked) {
       setAdminInUserMode(true);
-      setMode4Admin("User Mode");
       navigate("/user-home");
     }
     else {
       setAdminInUserMode(false);
-      setMode4Admin("Admin Mode");
       navigate("/admin-home");
     }
   }
@@ -176,12 +176,19 @@ const Header = () => {
     )}
 
     { adminLogged && (
+      <>
       <FormGroup>
         <FormControlLabel
-          control={<Switch {...label} color='secondary' onChange={handleSwitchToggle} />} //TODO: Change color
-          label={mode4Admin}
-        />
-      </FormGroup>
+          control={<Switch 
+            {...label} 
+            color='secondary' 
+            onChange={handleSwitchToggle} 
+            />}
+              />
+        </FormGroup>
+        {adminInUserMode && <AccountCircleIcon />}
+        {!adminInUserMode && <AdminPanelSettings />}
+      </>
     )} 
     
     {!userLogged && !adminLogged && (

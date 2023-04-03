@@ -232,7 +232,16 @@ const StartRide = () => {
     return (
     <>
     <div hidden={hidePage}>
-    <Container maxWidth='xs' sx={{ fontWeight: 'light', typography: 'body1' }}>
+    <Box maxWidth='xs' 
+        sx={{ fontWeight: 'light', typography: 'body1' }}
+        borderRadius={7} 
+        boxShadow={3} 
+        bgcolor="background.paper" 
+        p={3}
+        justifyContent="center"
+        alignItems="center"
+        width={"70%"}
+    >
         <Typography component="h1" variant="h5">
             Pick up a bike
         </Typography >
@@ -320,7 +329,7 @@ const StartRide = () => {
                     </Typography>
                 </Box>
         </Modal>
-    </Container>
+    </Box>
     </div>
     <div hidden={!hidePage}>
         <Typography align='center' color="error">

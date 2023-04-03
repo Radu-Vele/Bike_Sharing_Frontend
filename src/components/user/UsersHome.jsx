@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, Typography } from "@mui/material"
+import { Box, Divider, Typography } from "@mui/material"
 import MyRideDrawer from "../fragments/drawer/Drawer";
 import BasicMap from "../fragments/Map"
 import { Container } from "@mui/system";
 import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const UserHome = () => {
 
@@ -22,7 +22,7 @@ const UserHome = () => {
     }
   }
 
-useLayoutEffect( () => {
+useEffect( () => {
     let unmounted = false;
     
     retrieveStations().then((response) => {
@@ -38,16 +38,32 @@ useLayoutEffect( () => {
 
 
   return (
-    <Box>
+    <Box
+      justifyContent="center"
+      alignItems="center"
+    >
         <Typography variant = "h5" align="center">
           Hello and welcome to the Bike Sharing App Home Page!
         </Typography>
         <br></br>
         <MyRideDrawer />
         <br></br>
-        <Container align="center" maxWidth="l">
-          <BasicMap stationsArray={stationData}/>
-        </Container>
+        <Divider />
+        <br></br>
+        <Box
+          borderRadius={7} 
+          boxShadow={3} 
+          bgcolor="background.paper" 
+          p={3}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width={"70%"}
+        >
+          <Container align="center" maxWidth="m">
+            <BasicMap stationsArray={stationData}/>
+          </Container>
+        </Box>
 
         
     </Box>
