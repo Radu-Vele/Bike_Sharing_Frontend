@@ -15,7 +15,7 @@ import UserHome from './components/user/UsersHome';
 import myTheme from './theme/AppTheme';
 import StartRide from './components/system/StartRide';
 import AdminHome from './components/admin/AdminHome';
-import ManageBikesStations from './components/admin/ManageBikesStations.jsx';
+import ManageBikesStations from './components/admin/actions/ManageBikesStations.jsx';
 
 const drawerWidth = 240;
 
