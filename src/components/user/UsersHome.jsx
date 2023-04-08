@@ -21,9 +21,7 @@ const UserHome = () => {
       <Grid item xs={1}></Grid>
       <Grid item xs={10}>
         <RoundedShadowBox>
-          <Container align="center" maxWidth="m">
-            <BasicMap/>
-          </Container>
+          <BasicMap editMode={false}/>
         </RoundedShadowBox>
       </Grid>
       <Grid item xs={1}></Grid>

@@ -48,20 +48,6 @@ const ManageBikesStations = () => {
             <Grid item xs={12}>
                 <RoundedShadowBox>
                     <Typography variant="h6">
-                        Stations Actions
-                    </Typography>
-                    <Divider/>
-                    <Button onClick={handleStationsToggle}>
-                        Toggle View 
-                    </Button>
-                    <div hidden={!stationsToggle}>
-                        <StationsActions/>
-                    </div>
-                </RoundedShadowBox>
-            </Grid>
-            <Grid item xs={12}>
-                <RoundedShadowBox>
-                    <Typography variant="h6">
                         Bikes Actions
                     </Typography>
                     <Divider/>
@@ -70,6 +56,20 @@ const ManageBikesStations = () => {
                     </Button>
                     <div hidden={!bikesToggle}>
                         <BikesActions/>
+                    </div>
+                </RoundedShadowBox>
+            </Grid>
+            <Grid item xs={12}>
+                <RoundedShadowBox>
+                    <Typography variant="h6">
+                        Stations Actions
+                    </Typography>
+                    <Divider/>
+                    <Button onClick={handleStationsToggle}>
+                        Toggle View
+                    </Button>
+                    <div hidden={!stationsToggle}>
+                        <StationsActions/>
                     </div>
                 </RoundedShadowBox>
             </Grid>
