@@ -146,7 +146,7 @@ const EditAccount = (user) => {
                 sx={{ mt: 3, mb: 2 }}
               >
                 Edit Account
-            </LoadingButton>
+          </LoadingButton>
         </Box>             
       </Container>
     );

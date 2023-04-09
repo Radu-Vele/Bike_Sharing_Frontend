@@ -1,8 +1,9 @@
 import React from "react";
-import { MapContainer, TileLayer, Marker, Popup} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvent} from "react-leaflet";
 import { useState, useRef, useEffect } from "react";
 import "leaflet/dist/leaflet.css"
 import L from "leaflet";
+import { useMapEvents } from "react-leaflet";
 import { Button, Grid, ToggleButton } from "@mui/material";
 import axios from "../../api/customAxiosConfig/CustomAxiosConfig";
 
@@ -21,7 +22,7 @@ const emptyMarker = new L.Icon({
     iconSize: [45, 45],
 })
 
-const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn }) => {
+const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn, setPickedCoordinates }) => {
     const centerLocation= {lat: 46.77223350278075, lng: 23.585195329308466};
     const[stationData, setStationData] = useState([]);
     const ZOOM_LEVEL = 18;
@@ -34,7 +35,7 @@ const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn }) 
         retrieveStations().then((response) => {
                 setStationData(response.data);  
           });
-      }, [])
+    }, [])
     
     useEffect( () => {
         fun();
@@ -75,6 +76,10 @@ const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn }) 
     function handleExpand() {
         mapRef.current.invalidateSize();
     }
+
+    function handleMapClick(lat, lng) {
+        setPickedCoordinates({lat:lat, lng:lng});
+    }
     
     const fun = function() {
         const arr = stationData.map(item => (
@@ -101,15 +106,24 @@ const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn }) 
         setMarkers(arr);
     }
 
-    function handleMapClick(event) {
-        console.log("clicked");
-        console.log(event);
+    const MapEvents = () => {
+        useMapEvents({
+            click(e) {
+              handleMapClick(e.latlng.lat, e.latlng.lng);
+            },
+          });
+          return false;
     }
 
     return (
         <Grid container p={2} spacing={1}>
             <Grid item xs={3}>
-                <Button onClick={fun}>
+                <Button onClick={() => {
+                        retrieveStations().then((response) => {
+                            setStationData(response.data)});
+                        }
+                    }
+                >
                     Refresh Stations
                 </Button>
             </Grid>
@@ -147,13 +161,13 @@ const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn }) 
                             zoom ={ZOOM_LEVEL}
                             ref = {mapRef}
                             scrollWheelZoom={true}
-                            onClick={handleMapClick}
                         >
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=1Lk3zVWEbHf7oKZYoIri"
                         />
                         {showStations && markers}
+                        {pickCoordinatesOn && <MapEvents/>}
                 </MapContainer>
             </Grid>
         </Grid>
