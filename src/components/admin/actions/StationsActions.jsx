@@ -8,95 +8,162 @@ import AddNewStation from "../../../api/admin/actions/AddNewStation";
 import DeleteStation from "../../../api/admin/actions/DeleteStation";
 
 const StationsActions = () => {
-
     const [selectedEditStation, setSelectedEditStation] = useState(null);
-    const [pickCoordinatesOn, setPickCoordinatesOn] = useState(false);
+    /**
+     * Control the display mode of the grid line containing the map an either the:
+     * - edit dialog
+     * - add new station dialog
+     */
     const [gridRowDistribution, setGridRowDistribution] = useState({
         map: 12,
         edit_dialog: 0,
         new_station_dialog:0
     });
+    // New bike dialog state
+    const [pickCoordinatesOn, setPickCoordinatesOn] = useState(false);
     const [pickedCoordinates, setPickedCoordinates] = useState({
-        lat:0,
-        lng:0
+        lat:-1,
+        lng:-1
     });
-    const [addStationName, setAddStationName] = useState("");
-    const [addStationCapacity, setAddStationCapacity] = useState(-1);
-    const [addStationErrors, setAddStationErrors] = useState({
+    const [newStationName, setNewStationName] = useState("");
+    const [newStationCapacity, setNewStationCapacity] = useState(-1);
+    const [newStationErrors, setNewStationErrors] = useState({
+        bool_name_error: false,
         name_error: "",
+        bool_capacity_error: false,
         capacity_error: ""
     });
     const [halfFilledCheck, setHalfFilledCheck] = useState(false);
     const [persistInCSVCheck, setPersistInCSVCheck] = useState(false);
-    const [addSuccess, setAddSuccess] = useState(false);
-    const [addStationSubmitError, setAddStationSubmitError] = useState("");
-    const [deleteStationSuccess, setDeleteStationSuccess] = useState(false);
-    const [deleteStationError, setDeleteStationError] = useState("");
+    const [newStationSuccess, setNewStationSuccess] = useState({
+        bool: false,
+        message: "New station successfully added. Refresh the map and close this dialog."
+    });
+    const [newStationSubmitError, setNewStationSubmitError] = useState({
+        bool: false,
+        message: ""
+    });
+    const [deleteStationSuccess, setDeleteStationSuccess] = useState({
+        bool: false,
+        message: "Station deleted successfully. Refresh the map and close this dialog."
+    });
+    const [deleteStationError, setDeleteStationError] = useState({
+        bool: false,
+        message: ""
+    });
 
     useEffect(() => {
         if(selectedEditStation !== null) {
             setGridRowDistribution({ ...gridRowDistribution, map:8, edit_dialog:4, new_station_dialog:0 });
         }
+        else {
+            setGridRowDistribution({ ...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
+        }
     }, [selectedEditStation]);
 
+    // Callback functions for interacting with the map module ---
     const handleEditStationChange = (station_name) => {
         setSelectedEditStation(station_name);
     };
-
     const handlePickCoordinatesOn = (buttonValue) => {
         setPickCoordinatesOn(buttonValue);
         if(buttonValue === true) {
             setGridRowDistribution({ ...gridRowDistribution, map:8, edit_dialog:0, new_station_dialog:4 });
         }
         else {
+            setPickedCoordinates({...pickedCoordinates, lat: -1, lng: -1});
+            setNewStationErrors({...newStationErrors,
+                bool_name_error: false,
+                name_error: "",
+                bool_capacity_error: false,
+                capacity_error: ""});
+            setNewStationSuccess({...newStationSuccess, bool: false});
+            setNewStationSubmitError({...newStationSubmitError, bool: false, message: ""});
             setGridRowDistribution({ ...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
         }
-    }
-
-    const handleCloseEditDialog = () => {
-        setSelectedEditStation(null);
-        setDeleteStationError("");
-        setDeleteStationSuccess(false);
-        setGridRowDistribution({...gridRowDistribution, map:12, dialog:0 });
     };
-
     const handlePickedCoordinates = (obj) => {
         setPickedCoordinates(obj);
-    }
+    };
+    // ---
+    
+    const handleCloseEditDialog = () => {
+        setSelectedEditStation(null);
+        setDeleteStationError({...deleteStationError, bool: false, message:""});
+        setDeleteStationSuccess({...deleteStationSuccess, bool: false});
+        if(pickCoordinatesOn) {
+            //TODO: Figure out why this doesn't happen
+            setGridRowDistribution({...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:4 });
+        }
+        else {
+            setGridRowDistribution({...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
+        }
+    };
 
     function validateAddStationInput() {
+        setNewStationErrors({...newStationErrors,
+            bool_name_error:false,
+            name_error:"",
+            bool_capacity_error:false,
+            capacity_error:""}
+        );
+
+        var found_errors_count = 0;
+
+        //TODO: Check that the coordinates are correct
+        //TODO: figure out why the errors are not shown properly (compare with signup form)
+
+        if(newStationName === "") {
+            setNewStationErrors({...newStationErrors,
+                bool_name_error: true,
+                name_error: "You must input a station name"});
+            found_errors_count++;
+        }
         
-        if(addStationName === "") {
-            setAddStationErrors({...addStationErrors, name_error:"You must input a station name"});
+        if((!/^\d+$/im.test(newStationCapacity))) {
+            setNewStationErrors({...newStationErrors, 
+                bool_capacity_error: true,
+                capacity_error: "The capacity must be a positive number"});
+            found_errors_count++;
+        }
+        else if(newStationCapacity === -1) {
+            setNewStationErrors({...newStationErrors,
+                bool_capacity_error: true,
+                capacity_error:"You must input a valid capacity"});
+            found_errors_count++;
+        }
+
+        if(found_errors_count > 0) {
             return false;
         }
-        if((!/^\d+$/im.test(addStationCapacity))) {
-            setAddStationErrors({...addStationErrors, capacity_error:"The capacity must be a positive number"});
-            return false;
+        else {
+            return true;
         }
-        else if(addStationCapacity === -1) {
-            setAddStationErrors({...addStationErrors, capacity_error:"You must input a valid capacity"});
-            return false;
-        }
-        return true;
     }
 
-    const handleAddStationSubmit = async () => {
+    const handleAddStationSubmit = async () => {            
         if(validateAddStationInput()) {
-            setAddStationSubmitError("");
-            setAddStationErrors({...addStationErrors, name_error:"", capacity_error:""})
+            setNewStationSubmitError("");
+            setNewStationErrors({...newStationErrors,
+                bool_name_error:false,
+                name_error:"",
+                bool_capacity_error:false,
+                capacity_error:""})
+            
             const response = await AddNewStation(pickedCoordinates.lat, 
                 pickedCoordinates.lng, 
-                addStationCapacity,
-                addStationName, 
+                newStationCapacity,
+                newStationName, 
                 persistInCSVCheck,
                 halfFilledCheck);
+
             if (response.status !== 201) {
-                setAddStationSubmitError(response.data);
-                setAddSuccess(false);
+                setNewStationSubmitError({...newStationSubmitError, bool: true, message: response.data});
+                setNewStationSuccess({...newStationSuccess, bool: false});
             }
             else {  
-                setAddSuccess(true);
+                setNewStationSuccess({...newStationSuccess, bool: true});
+                setNewStationSubmitError({...newStationSubmitError, bool: false, message: ""});
             }
         }
     }
@@ -104,13 +171,12 @@ const StationsActions = () => {
     const handleDeleteStation = async () => {
         const response = await DeleteStation(selectedEditStation);
         if(response.status !== 200) {
-            setDeleteStationError("Station not present");
-            setDeleteStationSuccess(false);
+            setDeleteStationError({...deleteStationError, bool: true, message: response.data});
+            setDeleteStationSuccess({...deleteStationSuccess, bool: false});
         }
         else {
-            setDeleteStationSuccess(true);
-            setDeleteStationError("");
-            setSelectedEditStation(null);
+            setDeleteStationSuccess({...deleteStationSuccess, bool: true});
+            setDeleteStationError({...deleteStationError, bool: false, message: ""});
         }
     }
 
@@ -182,43 +248,44 @@ const StationsActions = () => {
                         <Button variant="contained" onClick={handleDeleteStation}>
                             Delete Station
                         </Button>
-                        {deleteStationSuccess && 
+                        { deleteStationSuccess.bool && 
                             <Typography color="success">
-                                Station Deleted Successfully.
+                                { deleteStationSuccess.message }
                             </Typography>
                         }
-                        <Typography color="error">
-                            {deleteStationError}
-                        </Typography>
+                        { deleteStationError.bool &&
+                            <Typography color="error">
+                                { deleteStationError.message }
+                            </Typography>
+                        }
                     </RoundedShadowBox>
                 </Grid>
 
-                <Grid hidden={!pickCoordinatesOn} item xs={gridRowDistribution.new_station_dialog}>
+                <Grid hidden={gridRowDistribution.new_station_dialog === 0} item xs={gridRowDistribution.new_station_dialog}>
                     <RoundedShadowBox>
                         <Typography variant="h6">
                             Add New Station
                         </Typography>
                         <Divider/>
                         <Typography>
-                            Location:
+                            Coordinates:
                         </Typography>
                         <Typography>
-                            Lat: {pickedCoordinates.lat}
+                            {pickedCoordinates.lat}
                         </Typography>            
                         <Typography>
-                            Long: {pickedCoordinates.lng}
+                            {pickedCoordinates.lng}
                         </Typography> 
                         <TextField
                             margin="normal"
                             fullWidth
                             id="station-name"
                             label="Station Name"
-                            name="name"
                             autoComplete="name"
                             autoFocus
-                            onChange={(e) => setAddStationName(e.target.value)}
-                            error = {addStationErrors.name_error !== ""}
-                            helperText={addStationErrors.name_error} 
+                            onChange={(e) => setNewStationName(e.target.value)}
+                            error = {newStationErrors.bool_name_error}
+                            helperText={newStationErrors.name_error} 
                         >
                             Station Name
                         </TextField>  
@@ -227,12 +294,11 @@ const StationsActions = () => {
                             fullWidth
                             id="station-capacity"
                             label="Station Capacity"
-                            name="name"
                             autoComplete="name"
                             autoFocus
-                            onChange={(e) => setAddStationCapacity(e.target.value)}
-                            error = {addStationErrors.capacity_error !== ""}
-                            helperText={addStationErrors.capacity_error}
+                            onChange={(e) => setNewStationCapacity(e.target.value)}
+                            error = {newStationErrors.bool_capacity_error}
+                            helperText={newStationErrors.capacity_error}
                         >
                             Station Name
                         </TextField>
@@ -243,12 +309,14 @@ const StationsActions = () => {
                         <Button variant="contained" onClick={handleAddStationSubmit}>
                             Add Station Here
                         </Button>
-                        {addSuccess && <Typography color="success">
-                            Station added successfuly.
+                        {newStationSuccess.bool && <Typography color="success">
+                            {newStationSuccess.message}
                         </Typography>}
-                        <Typography color="error">
-                            {addStationSubmitError} 
-                        </Typography>
+                        {newStationSubmitError.bool &&
+                            <Typography color="error">
+                                {newStationSubmitError.message} 
+                            </Typography>
+                        }
                     </RoundedShadowBox>
                 </Grid>
             </Grid>

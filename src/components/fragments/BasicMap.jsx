@@ -22,6 +22,16 @@ const emptyMarker = new L.Icon({
     iconSize: [45, 45],
 })
 
+/**
+ * Map component suitable for the station app with available operations for both admin and user.
+ * Operations:
+ *  * retrieve stations and create markers (done on render) 
+ *  * select a station to edit and send the name of it through the `setSelectedEditStation` method
+ *  * pick coordinates on the map through clicking
+ *      * need to set the pickCoordinatesOn to start capturing
+ *      * send the ON/OFF value of the pick coordinates function through `handlePickCoordinatesOn`
+ *      * send the value of the lat and lng through `setPickCoordinates`
+ */
 const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn, setPickedCoordinates }) => {
     const centerLocation= {lat: 46.77223350278075, lng: 23.585195329308466};
     const[stationData, setStationData] = useState([]);
@@ -31,18 +41,29 @@ const BasicMap = ({editMode, setSelectedEditStation, handlePickCoordinatesOn, se
     const [showStations, setShowStations] = useState(true);
     const [pickCoordinatesOn, setPickCoordinatesOn] = useState(false);
 
+    /**
+     * Retrieve stations and populate the stationData - called upon startup
+     */
     useEffect( () => {
         retrieveStations().then((response) => {
                 setStationData(response.data);  
           });
     }, [])
     
+    /**
+     * Update map markers when stationData is updated
+     */
     useEffect( () => {
         fun();
     }, [stationData]);
 
+    /**
+     * When pickCoordinatesOn value changes it is sent to the client
+     */
     useEffect(() => {
-        handlePickCoordinatesOn(pickCoordinatesOn);
+        if(editMode) {
+            handlePickCoordinatesOn(pickCoordinatesOn);
+        }
     }, [pickCoordinatesOn]);
 
     const retrieveStations = async () => {
