@@ -28,6 +28,8 @@ const StationsActions = () => {
     const [newStationName, setNewStationName] = useState("");
     const [newStationCapacity, setNewStationCapacity] = useState(-1);
     const [newStationErrors, setNewStationErrors] = useState({
+        bool_coordinates_not_selected: false,
+        coordinates_not_selected: "",
         bool_name_error: false,
         name_error: "",
         bool_capacity_error: false,
@@ -52,9 +54,15 @@ const StationsActions = () => {
         message: ""
     });
 
+    /**
+     * Called when the edit station modified (set or set to null)
+     */
     useEffect(() => {
         if(selectedEditStation !== null) {
             setGridRowDistribution({ ...gridRowDistribution, map:8, edit_dialog:4, new_station_dialog:0 });
+        }
+        else if(pickCoordinatesOn) {
+            setGridRowDistribution({ ...gridRowDistribution, map:8, edit_dialog:0, new_station_dialog:4 });
         }
         else {
             setGridRowDistribution({ ...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
@@ -68,11 +76,16 @@ const StationsActions = () => {
     const handlePickCoordinatesOn = (buttonValue) => {
         setPickCoordinatesOn(buttonValue);
         if(buttonValue === true) {
-            setGridRowDistribution({ ...gridRowDistribution, map:8, edit_dialog:0, new_station_dialog:4 });
+            if(selectedEditStation === null) {
+                setGridRowDistribution({ ...gridRowDistribution, map:8, edit_dialog:0, new_station_dialog:4 });
+            }
+            setSelectedEditStation(null);
         }
         else {
             setPickedCoordinates({...pickedCoordinates, lat: -1, lng: -1});
             setNewStationErrors({...newStationErrors,
+                bool_coordinates_not_selected: false,
+                coordinates_not_selected: "",
                 bool_name_error: false,
                 name_error: "",
                 bool_capacity_error: false,
@@ -88,68 +101,41 @@ const StationsActions = () => {
     // ---
     
     const handleCloseEditDialog = () => {
-        setSelectedEditStation(null);
         setDeleteStationError({...deleteStationError, bool: false, message:""});
         setDeleteStationSuccess({...deleteStationSuccess, bool: false});
-        if(pickCoordinatesOn) {
-            //TODO: Figure out why this doesn't happen
-            setGridRowDistribution({...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:4 });
-        }
-        else {
-            setGridRowDistribution({...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
-        }
+        setSelectedEditStation(null);
     };
 
     function validateAddStationInput() {
-        setNewStationErrors({...newStationErrors,
-            bool_name_error:false,
-            name_error:"",
-            bool_capacity_error:false,
-            capacity_error:""}
-        );
-
-        var found_errors_count = 0;
-
-        //TODO: Check that the coordinates are correct
-        //TODO: figure out why the errors are not shown properly (compare with signup form)
+        const errors = {}
+        if(pickedCoordinates.lat === -1 || pickCoordinatesOn.lng === -1) {
+            errors.bool_coordinates_not_selected = true;
+            errors.coordinates_not_selected = "You must select a location on the map.";
+        }
 
         if(newStationName === "") {
-            setNewStationErrors({...newStationErrors,
-                bool_name_error: true,
-                name_error: "You must input a station name"});
-            found_errors_count++;
+            errors.bool_name_error = true;
+            errors.name_error = "You must input a station name";
         }
         
         if((!/^\d+$/im.test(newStationCapacity))) {
-            setNewStationErrors({...newStationErrors, 
-                bool_capacity_error: true,
-                capacity_error: "The capacity must be a positive number"});
-            found_errors_count++;
+            errors.bool_capacity_error = true;
+            errors.capacity_error = "The capacity must be a positive number";
         }
         else if(newStationCapacity === -1) {
-            setNewStationErrors({...newStationErrors,
-                bool_capacity_error: true,
-                capacity_error:"You must input a valid capacity"});
-            found_errors_count++;
+            errors.bool_capacity_error = true;
+            errors.capacity_error = "You must input a valid capacity";
         }
 
-        if(found_errors_count > 0) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return errors;
     }
 
-    const handleAddStationSubmit = async () => {            
-        if(validateAddStationInput()) {
-            setNewStationSubmitError("");
-            setNewStationErrors({...newStationErrors,
-                bool_name_error:false,
-                name_error:"",
-                bool_capacity_error:false,
-                capacity_error:""})
-            
+    const handleAddStationSubmit = async (event) => {    
+        event.preventDefault();  
+        const errors = validateAddStationInput();
+        setNewStationErrors(errors);      
+        if(Object.keys(errors).length === 0) {
+            setNewStationSubmitError("");           
             const response = await AddNewStation(pickedCoordinates.lat, 
                 pickedCoordinates.lng, 
                 newStationCapacity,
@@ -276,9 +262,15 @@ const StationsActions = () => {
                         <Typography>
                             {pickedCoordinates.lng}
                         </Typography> 
+                        { newStationErrors.bool_coordinates_not_selected &&
+                            <Typography color="error">
+                                {newStationErrors.coordinates_not_selected}
+                            </Typography>
+                        }
                         <TextField
                             margin="normal"
                             fullWidth
+                            required
                             id="station-name"
                             label="Station Name"
                             autoComplete="name"
@@ -287,11 +279,12 @@ const StationsActions = () => {
                             error = {newStationErrors.bool_name_error}
                             helperText={newStationErrors.name_error} 
                         >
-                            Station Name
+                            Station Name 
                         </TextField>  
                         <TextField
                             margin="normal"
                             fullWidth
+                            required
                             id="station-capacity"
                             label="Station Capacity"
                             autoComplete="name"

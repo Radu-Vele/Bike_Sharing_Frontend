@@ -104,8 +104,6 @@ const SignUp = (signupAdmin) => {
           setError(true);
           setLoading(false);
         });
-    } else {
-      console.log(errors);
     }
   };
 
