@@ -6,6 +6,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import {FormGroup , FormControlLabel} from "@mui/material";
 import AddNewStation from "../../../api/admin/actions/AddNewStation";
 import DeleteStation from "../../../api/admin/actions/DeleteStation";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import EditStationService from "../../../api/admin/actions/EditStationService";
 
 const StationsActions = () => {
     const [selectedEditStation, setSelectedEditStation] = useState(null);
@@ -53,6 +59,19 @@ const StationsActions = () => {
         bool: false,
         message: ""
     });
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [editStationName, setEditStationName] = useState("");
+    const [editStationCapacity, setEditStationCapacity] = useState("");
+    const [editStationErrors, setEditStationErrors] = useState({
+        bool_capacity_error: false,
+        capacity_error:"",
+        bool_name_error: false,
+        name_error: ""
+    });
+    const [editStationSuccess, setEditStationSuccess] = useState({
+        bool: false,
+        message: "Station edited successfully, you may close this dialog and refresh the map"
+    });
 
     /**
      * Called when the edit station modified (set or set to null)
@@ -67,6 +86,8 @@ const StationsActions = () => {
         else {
             setGridRowDistribution({ ...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
         }
+        //delete messages related to the previous station
+        clearEditMessages();
     }, [selectedEditStation]);
 
     // Callback functions for interacting with the map module ---
@@ -101,10 +122,20 @@ const StationsActions = () => {
     // ---
     
     const handleCloseEditDialog = () => {
-        setDeleteStationError({...deleteStationError, bool: false, message:""});
-        setDeleteStationSuccess({...deleteStationSuccess, bool: false});
         setSelectedEditStation(null);
     };
+
+    const clearEditMessages = () => {
+        setEditStationName("");
+        setEditStationCapacity("");
+        setEditStationSuccess({...editStationSuccess, bool:false});
+        setEditStationErrors({...editStationErrors, bool_name_error:false, 
+            name_error:"", 
+            bool_capacity_error:false, 
+            capacity_error:""});
+        setDeleteStationError({...deleteStationError, bool: false, message:""});
+        setDeleteStationSuccess({...deleteStationSuccess, bool: false});
+    }
 
     function validateAddStationInput() {
         const errors = {}
@@ -164,6 +195,39 @@ const StationsActions = () => {
             setDeleteStationSuccess({...deleteStationSuccess, bool: true});
             setDeleteStationError({...deleteStationError, bool: false, message: ""});
         }
+        setDeleteDialogOpen(false);
+    }
+
+    function validateEditInput() {
+        const local_errors = {};
+        if(editStationCapacity === "" && editStationName === "") {
+            local_errors.bool_name_error = true;
+            local_errors.name_error = "You must input a new name or a new capacity (or both)"
+        }
+        if(editStationCapacity !== "") {
+            if((!/^\d+$/im.test(editStationCapacity))) {
+                local_errors.bool_capacity_error = true;
+                local_errors.capacity_error = "The capacity must be a positive number";
+            }
+        }
+        return local_errors;
+    }
+
+    const handleEditStation = async (event) => {
+        event.preventDefault();
+        console.log("Here");
+        const errors = validateEditInput();
+        setEditStationErrors(errors);
+        if(Object.keys(errors).length === 0) {
+            const response = await EditStationService(selectedEditStation, editStationName, editStationCapacity);
+            if(response.status !== 200) {
+                setEditStationErrors({...editStationErrors, bool_name_error: true, name_error: response.data});
+                setEditStationSuccess({...editStationSuccess, bool: false});
+            }
+            else {
+                setEditStationSuccess({...editStationSuccess, bool: true});
+            }
+        }
     }
 
     return (
@@ -189,7 +253,6 @@ const StationsActions = () => {
                         </IconButton>  
                         <Typography variant="h6"> Edit station {selectedEditStation}:</Typography>
                         <Divider/>
-                        <br></br>
                         <TextField
                             margin="normal"
                             fullWidth
@@ -198,16 +261,12 @@ const StationsActions = () => {
                             name="name"
                             autoComplete="name"
                             autoFocus
-                            // onChange={}
-                            // error = {errors.name_err}
-                            // helperText={errors.legalName} 
+                            onChange={(e) => {setEditStationName(e.target.value);}}
+                            error = {editStationErrors.bool_name_error}
+                            helperText={editStationErrors.name_error} 
                         >
                             New Name
                         </TextField>
-                        <br></br>
-                        <Button variant="contained">
-                            Rename Station
-                        </Button>
                         <br></br>
                         <TextField
                             margin="normal"
@@ -217,23 +276,59 @@ const StationsActions = () => {
                             name="name"
                             autoComplete="name"
                             autoFocus
-                            // onChange={}
-                            // error = {errors.name_err}
-                            // helperText={errors.legalName} 
+                            onChange={(e) => {setEditStationCapacity(e.target.value)}}
+                            error = {editStationErrors.bool_capacity_error}
+                            helperText={editStationErrors.capacity_error} 
                         >
-                            New Name
+                            New Capacity
                         </TextField>
+                        <Typography>
+                            Note: if the new capacity of the station is smaller than the current one, the extra bikes will be removed.
+                        </Typography>
                         <br></br>
-                        <Button variant="contained">
-                            Change Capacity
+                        <Button 
+                            variant="contained"
+                            onClick={handleEditStation}
+                        >
+                            Edit Station
                         </Button>
+                        { editStationSuccess.bool && (
+                            <Typography>
+                                {editStationSuccess.message}
+                            </Typography>
+                        )
+
+                        }
                         <br></br>
                         <br></br>
                         <Divider/>
                         <br></br>
-                        <Button variant="contained" onClick={handleDeleteStation}>
+                        <Button variant="contained" onClick={() => {setDeleteDialogOpen(true);}}>
                             Delete Station
                         </Button>
+                        <Dialog
+                            open={deleteDialogOpen}
+                            onClose={() => {setDeleteDialogOpen(false);}}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">
+                                Delete the selected station.
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    Are you sure you want to permanently delete the station {selectedEditStation}?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => {setDeleteDialogOpen(false);}}>
+                                    No
+                                </Button>
+                                <Button onClick={handleDeleteStation} autoFocus>
+                                    Yes
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                         { deleteStationSuccess.bool && 
                             <Typography color="success">
                                 { deleteStationSuccess.message }

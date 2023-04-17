@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Typography, Grid, Divider } from "@mui/material"
+import { Button, Typography, Grid, Divider, ToggleButton } from "@mui/material"
 import ImportInitialStations from "../../../api/admin/ImportInitialStations"
 import RoundedShadowBox from '../../../custom_components/RoundedShadowBox';
 import BikesActions from './BikesActions';
@@ -28,14 +28,6 @@ const ManageBikesStations = () => {
           });
     }
 
-    const handleStationsToggle = () => {
-        setStationsToggle(!stationsToggle);
-    }
-
-    const handleBikesToggle = () => {
-        setBikesToggle(!bikesToggle);
-    }
-
     return (
     <>
         <Grid container spacing={2} p={2} >
@@ -51,9 +43,14 @@ const ManageBikesStations = () => {
                         Bikes Actions
                     </Typography>
                     <Divider/>
-                    <Button onClick={handleBikesToggle}>
+                    <ToggleButton 
+                        value="check"
+                        selected={bikesToggle}
+                        onChange={() => {setBikesToggle(!bikesToggle);}}
+                        color={"primary"}
+                    >
                         Toggle View
-                    </Button>
+                    </ToggleButton>
                     <div hidden={!bikesToggle}>
                         <BikesActions/>
                     </div>
@@ -65,9 +62,14 @@ const ManageBikesStations = () => {
                         Stations Actions
                     </Typography>
                     <Divider/>
-                    <Button onClick={handleStationsToggle}>
+                    <ToggleButton
+                        value="check"
+                        selected={stationsToggle}
+                        onChange={() => {setStationsToggle(!stationsToggle);}}
+                        color={"primary"}
+                    >
                         Toggle View
-                    </Button>
+                    </ToggleButton>
                     <div hidden={!stationsToggle}>
                         <StationsActions/>
                     </div>
