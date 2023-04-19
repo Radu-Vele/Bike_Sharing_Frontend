@@ -16,7 +16,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { AdminPanelSettings } from "@mui/icons-material";
 
 const Header = () => {
-  const [adminInUserMode, setAdminInUserMode] = useState(false);
+  const [adminInUserMode, setAdminInUserMode] = useState(AuthenticationService.isAdminInUserMode());
   const userLogged = AuthenticationService.isUserLoggedIn();
   const adminLogged = AuthenticationService.isAdminLoggedIn();
   const [openActions, setOpenActions] = useState(false);
@@ -26,6 +26,7 @@ const Header = () => {
   const label = "-"; //?
 
   const handleSwitchToggle = (event) => {
+    AuthenticationService.setAdminInUserMode(event.target.checked); //TODO: Investigate
     if(event.target.checked) {
       setAdminInUserMode(true);
       navigate("/user-home");
@@ -66,7 +67,7 @@ const Header = () => {
             Cluj Bike Sharing
           </Typography>
     
-    {(userLogged || adminInUserMode) && (  
+    {(userLogged || adminInUserMode ) && (  
       <>
           <Button color="inherit">
             <NavLink 
@@ -183,8 +184,8 @@ const Header = () => {
             color='secondary' 
             onChange={handleSwitchToggle} 
             />}
-              />
-        </FormGroup>
+        />
+      </FormGroup>
         {adminInUserMode && <AccountCircleIcon />}
         {!adminInUserMode && <AdminPanelSettings />}
       </>

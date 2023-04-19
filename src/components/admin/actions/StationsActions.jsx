@@ -72,6 +72,11 @@ const StationsActions = () => {
         bool: false,
         message: "Station edited successfully, you may close this dialog and refresh the map"
     });
+    const [editStationSubmitError, setEditStationSubmitError] = useState({
+        bool: false,
+        message: ""
+    });
+
 
     /**
      * Called when the edit station modified (set or set to null)
@@ -94,6 +99,7 @@ const StationsActions = () => {
     const handleEditStationChange = (station_name) => {
         setSelectedEditStation(station_name);
     };
+
     const handlePickCoordinatesOn = (buttonValue) => {
         setPickCoordinatesOn(buttonValue);
         if(buttonValue === true) {
@@ -104,18 +110,12 @@ const StationsActions = () => {
         }
         else {
             setPickedCoordinates({...pickedCoordinates, lat: -1, lng: -1});
-            setNewStationErrors({...newStationErrors,
-                bool_coordinates_not_selected: false,
-                coordinates_not_selected: "",
-                bool_name_error: false,
-                name_error: "",
-                bool_capacity_error: false,
-                capacity_error: ""});
-            setNewStationSuccess({...newStationSuccess, bool: false});
-            setNewStationSubmitError({...newStationSubmitError, bool: false, message: ""});
+            clearNewStationMessages();
             setGridRowDistribution({ ...gridRowDistribution, map:12, edit_dialog:0, new_station_dialog:0 });
         }
     };
+
+
     const handlePickedCoordinates = (obj) => {
         setPickedCoordinates(obj);
     };
@@ -125,14 +125,36 @@ const StationsActions = () => {
         setSelectedEditStation(null);
     };
 
+    const clearNewStationMessages = () => {
+        //Textfield values and checkboxes
+        setNewStationName("");
+        setNewStationCapacity(-1);
+        setHalfFilledCheck(false);
+        setPersistInCSVCheck(false);
+        // Prompts
+        setNewStationErrors({...newStationErrors,
+            bool_coordinates_not_selected: false,
+            coordinates_not_selected: "",
+            bool_name_error: false,
+            name_error: "",
+            bool_capacity_error: false,
+            capacity_error: ""});
+        setNewStationSuccess({...newStationSuccess, bool: false});
+        setNewStationSubmitError({...newStationSubmitError, bool: false, message: ""});
+    }
+
     const clearEditMessages = () => {
+        //clear textfields
         setEditStationName("");
         setEditStationCapacity("");
+        //clear prompts and errors
         setEditStationSuccess({...editStationSuccess, bool:false});
+        setEditStationSubmitError({...editStationErrors, bool: false, message: ""});
         setEditStationErrors({...editStationErrors, bool_name_error:false, 
             name_error:"", 
             bool_capacity_error:false, 
-            capacity_error:""});
+            capacity_error:""}
+        );
         setDeleteStationError({...deleteStationError, bool: false, message:""});
         setDeleteStationSuccess({...deleteStationSuccess, bool: false});
     }
@@ -215,16 +237,16 @@ const StationsActions = () => {
 
     const handleEditStation = async (event) => {
         event.preventDefault();
-        console.log("Here");
         const errors = validateEditInput();
         setEditStationErrors(errors);
         if(Object.keys(errors).length === 0) {
             const response = await EditStationService(selectedEditStation, editStationName, editStationCapacity);
             if(response.status !== 200) {
-                setEditStationErrors({...editStationErrors, bool_name_error: true, name_error: response.data});
+                setEditStationSubmitError({...editStationErrors, bool: true, message: response.data});
                 setEditStationSuccess({...editStationSuccess, bool: false});
             }
             else {
+                setEditStationSubmitError({...editStationErrors, bool: false, message: ""});
                 setEditStationSuccess({...editStationSuccess, bool: true});
             }
         }
@@ -261,6 +283,7 @@ const StationsActions = () => {
                             name="name"
                             autoComplete="name"
                             autoFocus
+                            value={editStationName}
                             onChange={(e) => {setEditStationName(e.target.value);}}
                             error = {editStationErrors.bool_name_error}
                             helperText={editStationErrors.name_error} 
@@ -276,6 +299,7 @@ const StationsActions = () => {
                             name="name"
                             autoComplete="name"
                             autoFocus
+                            value={editStationCapacity}
                             onChange={(e) => {setEditStationCapacity(e.target.value)}}
                             error = {editStationErrors.bool_capacity_error}
                             helperText={editStationErrors.capacity_error} 
@@ -292,6 +316,11 @@ const StationsActions = () => {
                         >
                             Edit Station
                         </Button>
+                        { editStationSubmitError.bool && (
+                            <Typography color="error">
+                                {editStationSubmitError.message}
+                            </Typography>
+                        )}
                         { editStationSuccess.bool && (
                             <Typography>
                                 {editStationSuccess.message}
@@ -370,6 +399,7 @@ const StationsActions = () => {
                             label="Station Name"
                             autoComplete="name"
                             autoFocus
+                            value={newStationName}
                             onChange={(e) => setNewStationName(e.target.value)}
                             error = {newStationErrors.bool_name_error}
                             helperText={newStationErrors.name_error} 
@@ -384,6 +414,7 @@ const StationsActions = () => {
                             label="Station Capacity"
                             autoComplete="name"
                             autoFocus
+                            value={newStationCapacity}
                             onChange={(e) => setNewStationCapacity(e.target.value)}
                             error = {newStationErrors.bool_capacity_error}
                             helperText={newStationErrors.capacity_error}
@@ -391,8 +422,8 @@ const StationsActions = () => {
                             Station Name
                         </TextField>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={(e) => setHalfFilledCheck(e.target.checked)}/>} label="Half-fill station with new bikes" />
-                            <FormControlLabel control={<Checkbox onChange={(e) => setPersistInCSVCheck(e.target.checked)}/>} label="Save station to initialization csv" />
+                            <FormControlLabel control={<Checkbox onChange={(e) => setHalfFilledCheck(e.target.checked)} checked={halfFilledCheck}/>} label="Half-fill station with new bikes" />
+                            <FormControlLabel control={<Checkbox onChange={(e) => setPersistInCSVCheck(e.target.checked)} checked={persistInCSVCheck}/>} label="Save station to initialization csv" />
                         </FormGroup>
                         <Button variant="contained" onClick={handleAddStationSubmit}>
                             Add Station Here

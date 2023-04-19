@@ -7,6 +7,7 @@ class AuthenticationService {
     registerSuccessfulLoginAdmin(username) {
       sessionStorage.setItem("authenticatedUser", username);
       sessionStorage.setItem("role", "admin");
+      sessionStorage.setItem("adminInUserMode", false);
     }
   
     logout() {
@@ -32,6 +33,14 @@ class AuthenticationService {
       else {
         return true;
       }
+    }
+
+    isAdminInUserMode() {
+      return sessionStorage.getItem("adminInUserMode")
+    }
+
+    setAdminInUserMode(bool) {
+      sessionStorage.setItem("adminInUserMode", bool);
     }
   
     getLoggedInUser() {
