@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import style_nav from "../../../css/Navlink.module.css";
 import { Box, Switch, FormGroup, FormControlLabel, ClickAwayListener, MenuItem } from "@mui/material";
 import { AppBar, Popper, Paper, MenuList, Grow } from '@mui/material';
@@ -16,23 +16,30 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { AdminPanelSettings } from "@mui/icons-material";
 
 const Header = () => {
-  const [adminInUserMode, setAdminInUserMode] = useState(AuthenticationService.isAdminInUserMode());
+  const [adminInUserMode, setAdminInUserMode] = useState(false);
   const userLogged = AuthenticationService.isUserLoggedIn();
   const adminLogged = AuthenticationService.isAdminLoggedIn();
   const [openActions, setOpenActions] = useState(false);
   const anchorRef = useRef(null);
 
   const navigate = useNavigate();
-  const label = "-"; //?
+  const label = "-";
+
+  useEffect(() => {
+    const switchValue = AuthenticationService.isAdminInUserMode();
+    console.log(switchValue);
+    setAdminInUserMode(switchValue);
+  },[]);
 
   const handleSwitchToggle = (event) => {
-    AuthenticationService.setAdminInUserMode(event.target.checked); //TODO: Investigate
+    const switchOn = event.target.checked;
+    AuthenticationService.setAdminInUserMode(switchOn); //TODO: Investigate
+    setAdminInUserMode(switchOn);
+
     if(event.target.checked) {
-      setAdminInUserMode(true);
       navigate("/user-home");
     }
     else {
-      setAdminInUserMode(false);
       navigate("/admin-home");
     }
   }
@@ -182,6 +189,7 @@ const Header = () => {
           control={<Switch 
             {...label} 
             color='secondary' 
+            checked={adminInUserMode}
             onChange={handleSwitchToggle} 
             />}
         />

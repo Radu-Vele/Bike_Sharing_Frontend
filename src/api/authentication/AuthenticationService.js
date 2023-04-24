@@ -36,7 +36,8 @@ class AuthenticationService {
     }
 
     isAdminInUserMode() {
-      return sessionStorage.getItem("adminInUserMode")
+      const isAdmin = sessionStorage.getItem("adminInUserMode");
+      return isAdmin === "true" ? true : false;
     }
 
     setAdminInUserMode(bool) {
