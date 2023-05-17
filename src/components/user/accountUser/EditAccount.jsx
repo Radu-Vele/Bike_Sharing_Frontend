@@ -82,9 +82,9 @@ const EditAccount = (user) => {
 
             const response = await EditAccountService(info);
             setLoading(true);
-            if (response.status === 201) {
+            if (response.status === 200) {
                 setLoading(false);
-                window.location.reload(false);
+                window.location.reload();
             }
             else {
               //add sumbit error display
@@ -104,7 +104,7 @@ const EditAccount = (user) => {
         </Typography>
         <Box component="form" onSubmit={submitHandler} noValidate sx={{ mt: 1 }}>
           <FormGroup>
-            <FormControlLabel control={<Checkbox onChange={(e) => setNameChecked(e.target.checked)}/>} label="Edit username" />
+            <FormControlLabel control={<Checkbox onChange={(e) => setNameChecked(e.target.checked)}/>} label="Edit full name" />
           </FormGroup>
             
             <TextField

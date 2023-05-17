@@ -27,13 +27,12 @@ const Header = () => {
 
   useEffect(() => {
     const switchValue = AuthenticationService.isAdminInUserMode();
-    console.log(switchValue);
     setAdminInUserMode(switchValue);
   },[]);
 
   const handleSwitchToggle = (event) => {
     const switchOn = event.target.checked;
-    AuthenticationService.setAdminInUserMode(switchOn); //TODO: Investigate
+    AuthenticationService.setAdminInUserMode(switchOn);
     setAdminInUserMode(switchOn);
 
     if(event.target.checked) {

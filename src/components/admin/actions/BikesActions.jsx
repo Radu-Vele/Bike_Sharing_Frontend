@@ -1,14 +1,30 @@
-import { Grid, Typography } from "@mui/material";
+import { useState } from "react";
+import { ToggleButton, Grid, Table, TextField, Typography, Button } from "@mui/material";
+import { FilterAlt } from "@mui/icons-material";
+import RoundedShadowBox from "../../../custom_components/RoundedShadowBox";
 
 const BikesActions = () => {
+    const [rows, setRows] = useState([]);
+
     return (
-        <Typography>
-            Possible actions:
-            - create bike and place it in pool of bikes
-            - show bikes that need service (set as repaired)
-            - edit a specific bike (select, move to)
-            - delete a bike (select from all bikes)
-        </Typography>
+        <Grid container spacing={2} p={2} >
+            <Grid item xs={12}>
+                <Grid container spacing={2} p={2} >
+                    <Grid item xs={12}>
+                        <ToggleButton
+                            variant="contained"
+                        >
+                            <FilterAlt/> Filter Bikes
+                        </ToggleButton>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={12}>
+                <RoundedShadowBox>
+
+                </RoundedShadowBox>
+            </Grid>
+        </Grid>
     )
 }
 

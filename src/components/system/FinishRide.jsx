@@ -30,7 +30,6 @@ const FinishRide = () => {
 
     useEffect( () => {
         var timer = setInterval(() => setDate(new Date()), 1000);
-        console.log(rideStartTime);
         return function cleanup() {
             clearInterval(timer);
         }
