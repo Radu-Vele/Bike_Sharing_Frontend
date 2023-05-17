@@ -43,6 +43,7 @@ const ManageBikesStations = () => {
                         Bikes Actions
                     </Typography>
                     <Divider/>
+                    <br></br>
                     <ToggleButton 
                         value="check"
                         selected={bikesToggle}
@@ -62,6 +63,7 @@ const ManageBikesStations = () => {
                         Stations Actions
                     </Typography>
                     <Divider/>
+                    <br></br>
                     <ToggleButton
                         value="check"
                         selected={stationsToggle}

@@ -60,16 +60,9 @@ const Header = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
         <Toolbar>
-        <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu" //TODO: make it point to home page
-            sx={{ mr: 2 }}
-          >
-            <DirectionsBikeIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <DirectionsBikeIcon />
+
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} p={2}>
             Cluj Bike Sharing
           </Typography>
     

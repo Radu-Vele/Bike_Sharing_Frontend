@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 const RoundedShadowBox = ({children}) => {
   return (
     <Box
-        borderRadius={7} 
+        borderRadius={3} 
         boxShadow={3} 
         bgcolor="background.paper" 
         p={3}
