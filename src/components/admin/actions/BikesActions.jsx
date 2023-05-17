@@ -1,18 +1,60 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToggleButton, Box, Grid, Table, TextField, Typography, Button, Accordion, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel } from "@mui/material";
 import { FilterAlt } from "@mui/icons-material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FetchBikesData from "../../../api/admin/dashboard/FetchBikesData";
 
 const BikesActions = () => {
     const [rows, setRows] = useState([]);
     const [filters, setFilters] = useState({
         hostStation: "",
-        bikeId: -1,
+        externalId: "",
         onlyUsable: false,
         onlyNotUsable: false
     })
+    const [filtersErrors, setFiltersErrors] = useState({
+        bool_external_id_error : false, 
+        external_id_error : "",
+        bool_host_station_error: false,
+        host_station_error : ""
+    })
 
+    useEffect(() => {
+        async function fetchData() {
+            await FetchBikesData(filters).then((response) => {
+                console.log(response.status)
+                if (response.status === 200) {
+                  populateTable(response);
+                }
+              })
+              .catch((err) => {
+                setRows([]);
+              });
+        }
 
+        const errors = validateFilters();
+        setFiltersErrors(errors);
+        if(Object.keys(errors).length === 0) {
+            fetchData();
+        }
+    }, [filters])
+    
+    function validateFilters() {
+        const errors = {}
+        
+        if(filters.externalId !== "") {
+            if (!/^\d+$/.test(filters.externalId)) {
+                errors.bool_external_id_error = true
+                errors.external_id_error = "Need to have the external ID as an integer";
+            }
+        }
+
+        return errors;
+    }
+
+    function populateTable(response) {
+        //TODO: populate table
+    }
 
     return (
         <Grid container spacing={2} p={2} >
@@ -40,16 +82,16 @@ const BikesActions = () => {
                                             name="external-id"
                                             autoComplete="external-id"
                                             autoFocus
-                                            // value={editStationName}
-                                            // onChange={(e) => {setEditStationName(e.target.value);}}
-                                            // error = {editStationErrors.bool_name_error}
-                                            // helperText={editStationErrors.name_error} 
+                                            value={filters.externalId}
+                                            onChange= {(e) => setFilters({ ...filters, externalId: e.target.value })}
+                                            error = {filtersErrors.bool_external_id_error}
+                                            helperText={filtersErrors.external_id_error} 
                                         >
-
                                         </TextField>
                                     </Grid>
                                     <Grid item xs={3}>
                                         <TextField
+                                                //TODO: replace with a dropdown menu
                                                 margin="normal"
                                                 fullWidth
                                                 id="host-station-filter"
@@ -57,21 +99,42 @@ const BikesActions = () => {
                                                 name="host-station"
                                                 autoComplete="host-station"
                                                 autoFocus
-                                                // value={editStationName}
-                                                // onChange={(e) => {setEditStationName(e.target.value);}}
-                                                // error = {editStationErrors.bool_name_error}
-                                                // helperText={editStationErrors.name_error} 
-                                        >
-                                            
+                                                value={filters.hostStation}
+                                                onChange={(e) => setFilters({ ...filters, hostStation: e.target.value })}
+                                                error = {filtersErrors.bool_host_station_error}
+                                                helperText={filtersErrors.host_station_error} 
+                                        >   
                                         </TextField>
                                     </Grid>
                                     <Grid item xs = {6}>
                                         <Grid container p={1}>
                                             <Grid item xs={6}>
-                                                <FormControlLabel control={<Checkbox />} label="Usable Only" />
+                                                <FormControlLabel control={<Checkbox
+                                                    onChange={(e) => {
+                                                            if(e.target.checked && filters.onlyNotUsable) {
+                                                                setFilters({ ...filters, onlyNotUsable: false,  onlyUsable: e.target.checked});
+                                                            }
+                                                            else {
+                                                                setFilters({ ...filters, onlyUsable: e.target.checked});
+                                                            }
+                                                        }
+                                                    } 
+                                                    checked={filters.onlyUsable}
+                                                />} label="Usable Only" />
                                             </Grid>
                                             <Grid item xs={6}>
-                                                <FormControlLabel control={<Checkbox />} label="Broken Only" />
+                                                <FormControlLabel control={<Checkbox 
+                                                    onChange={(e) => {
+                                                        if(e.target.checked && filters.onlyUsable) {
+                                                            setFilters({ ...filters, onlyNotUsable: e.target.checked,  onlyUsable: false});
+                                                        }
+                                                        else {
+                                                            setFilters({ ...filters, onlyNotUsable: e.target.checked});
+                                                        }
+                                                        }
+                                                    } 
+                                                    checked={filters.onlyNotUsable}
+                                                />} label="Broken Only" />
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -95,8 +158,9 @@ const BikesActions = () => {
                     </Typography>
                     }
                     {
-                        // add table with the results from queriyng the bikes based on filters
+
                     }
+                    
                 </Box>
             </Grid>
         </Grid>

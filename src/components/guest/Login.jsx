@@ -48,7 +48,6 @@ const Login = () => {
     
     let errors = validate(credentials);
     setErrors(errors);
-    console.log(errors);
 
     if (Object.keys(errors).length === 0) {
       setLoading(true);
@@ -73,7 +72,6 @@ const Login = () => {
         AuthenticationService.setUpToken(token);
         
         const response = await LoginService();
-        console.log(response);
         
         if (response.status !== 200) {
           setLoading(false);

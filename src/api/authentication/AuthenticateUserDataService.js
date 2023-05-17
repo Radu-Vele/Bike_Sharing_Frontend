@@ -8,7 +8,6 @@ const AuthenticateUserDataService = (username, password) => {
     })
     .then((res) => {
       if (res != null) {
-        console.log(res);
         return res;
       }
     })
