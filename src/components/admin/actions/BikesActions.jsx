@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
-import { ToggleButton, Box, Grid, Table, TextField, Typography, Button, Accordion, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel } from "@mui/material";
+import { ToggleButton, Box, Grid, TextField, Typography, Button, Accordion, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel, TablePagination } from "@mui/material";
 import { FilterAlt } from "@mui/icons-material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FetchBikesData from "../../../api/admin/dashboard/FetchBikesData";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import Paper from '@mui/material/Paper';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+
 
 const BikesActions = () => {
     const [rows, setRows] = useState([]);
@@ -19,10 +27,21 @@ const BikesActions = () => {
         host_station_error : ""
     })
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+  
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+  
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(+event.target.value);
+      setPage(0);
+    };
+
     useEffect(() => {
         async function fetchData() {
             await FetchBikesData(filters).then((response) => {
-                console.log(response.status)
                 if (response.status === 200) {
                   populateTable(response);
                 }
@@ -52,8 +71,20 @@ const BikesActions = () => {
         return errors;
     }
 
+    function createBikeEntry(externalId, usable, available, rating) {
+        return {externalId, usable, available, rating}
+    }
+
     function populateTable(response) {
-        //TODO: populate table
+        const arr = [];
+        for(let i = 0; i < response.data.length; i++) {
+            arr.push(createBikeEntry(response.data[i].externalId,
+                response.data[i].usable.toString(),
+                response.data[i].available.toString(),
+                response.data[i].rating));
+        }
+        console.log(arr);
+        setRows(arr);
     }
 
     return (
@@ -157,10 +188,42 @@ const BikesActions = () => {
                         No items found
                     </Typography>
                     }
-                    {
-
-                    }
-                    
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                <TableCell align="right">External ID</TableCell>
+                                <TableCell align="right">Usable</TableCell>
+                                <TableCell align="right">Available</TableCell>
+                                <TableCell align="right">Rating</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {rows
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row) => (
+                                        <TableRow
+                                            key={row.externalId}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell align="right">{row.externalId}</TableCell>
+                                            <TableCell align="right">{row.usable}</TableCell>
+                                            <TableCell align="right">{row.available}</TableCell>
+                                            <TableCell align="right">{row.rating}</TableCell>
+                                        </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
                 </Box>
             </Grid>
         </Grid>
