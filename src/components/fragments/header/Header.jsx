@@ -151,13 +151,13 @@ const Header = () => {
                           Manage Bikes & Stations
                         </NavLink>
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      {/* <MenuItem onClick={handleClose}> //TODO
                         <NavLink 
                         to="/manage-users"
                         >
                           Manage Users
                         </NavLink>
-                      </MenuItem>
+                      </MenuItem> */}
                       <MenuItem onClick={handleClose}>
                         <NavLink 
                         to="/new-admin"
