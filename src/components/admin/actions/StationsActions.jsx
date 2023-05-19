@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import EditStationService from "../../../api/admin/actions/EditStationService";
+import AddFreshBikeHere from "../../../api/admin/actions/AddFreshBikeService";
 
 const StationsActions = () => {
     const [selectedEditStation, setSelectedEditStation] = useState(null);
@@ -73,6 +74,14 @@ const StationsActions = () => {
         message: "Station edited successfully, you may close this dialog and refresh the map"
     });
     const [editStationSubmitError, setEditStationSubmitError] = useState({
+        bool: false,
+        message: ""
+    });
+    const [addFreshBikeHereSuccess, setAddFreshBikeHereSuccess] = useState({
+        bool: false,
+        message: "Fresh bike successfully added. Refresh the map."
+    });
+    const [addFreshBikeHereError, setAddFreshBikeHereError] = useState({
         bool: false,
         message: ""
     });
@@ -157,6 +166,8 @@ const StationsActions = () => {
         );
         setDeleteStationError({...deleteStationError, bool: false, message:""});
         setDeleteStationSuccess({...deleteStationSuccess, bool: false});
+        setAddFreshBikeHereError({...addFreshBikeHereError, bool: false, message:""})
+        setAddFreshBikeHereSuccess({...addFreshBikeHereSuccess, bool: false});
     }
 
     function validateAddStationInput() {
@@ -196,7 +207,7 @@ const StationsActions = () => {
                 persistInCSVCheck,
                 halfFilledCheck);
 
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 setNewStationSubmitError({...newStationSubmitError, bool: true, message: response.data});
                 setNewStationSuccess({...newStationSuccess, bool: false});
             }
@@ -250,6 +261,21 @@ const StationsActions = () => {
                 setEditStationSuccess({...editStationSuccess, bool: true});
             }
         }
+    }
+
+    const handleAddFreshBikeHere = async (event) => {
+        event.preventDefault();
+        await AddFreshBikeHere(selectedEditStation).then((response) => {
+            if (response.status !== 201) {
+                setAddFreshBikeHereError({...addFreshBikeHereError, bool: true, message: response.data});
+                setAddFreshBikeHereSuccess({...addFreshBikeHereSuccess, bool: false});
+            }
+            else {
+                setAddFreshBikeHereError({...addFreshBikeHereError, bool: false, message: ""});
+                setAddFreshBikeHereSuccess({...addFreshBikeHereSuccess, bool: true});
+            }
+        }
+        )
     }
 
     return (
@@ -324,6 +350,23 @@ const StationsActions = () => {
                             </Typography>
                         )
 
+                        }
+                        <br></br>
+                        <br></br>
+                        <Divider/>
+                        <br></br>
+                        <Button variant="contained" onClick={(e) => {handleAddFreshBikeHere(e)}}>
+                            Add Fresh Bike Here
+                        </Button>
+                        { addFreshBikeHereSuccess.bool && 
+                            <Typography color="success">
+                                { addFreshBikeHereSuccess.message }
+                            </Typography>
+                        }
+                        { addFreshBikeHereError.bool &&
+                            <Typography color="error">
+                                { addFreshBikeHereError.message }
+                            </Typography>
                         }
                         <br></br>
                         <br></br>
