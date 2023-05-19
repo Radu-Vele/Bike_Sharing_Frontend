@@ -32,6 +32,8 @@ const BikesActions = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [chosenStation, setChosenStation] = useState("");
     const [hostStationData, setHostStationData] = useState([]);
+    const [selectedBike, setSelectedBike] = useState(-1);
+    const [hiddenSelectedBikeActions, setHiddenSelectedBikeActions] = useState(true);
 
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
@@ -126,6 +128,17 @@ const BikesActions = () => {
         else {
             setChosenStation(event.target.value);        
             setFilters({ ...filters, hostStation: event.target.value});
+        }
+    }
+
+    const handleClick = (event, externalId) => {
+        if(selectedBike === externalId) {
+            setSelectedBike(-1);
+            setHiddenSelectedBikeActions(true);
+        }
+        else {
+            setSelectedBike(externalId);
+            setHiddenSelectedBikeActions(false);
         }
     }
 
@@ -241,17 +254,33 @@ const BikesActions = () => {
                             <TableBody>
                                 {rows
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row) => (
-                                        <TableRow
-                                            key={row.externalId}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="right">{row.externalId}</TableCell>
-                                            <TableCell align="right">{row.usable}</TableCell>
-                                            <TableCell align="right">{row.available}</TableCell>
-                                            <TableCell align="right">{row.rating}</TableCell>
-                                        </TableRow>
-                                    ))}
+                                    .map((row) => {
+                                        
+                                        const isSelected = selectedBike === row.externalId;
+
+                                        return(
+                                            <TableRow
+                                                key={row.externalId}
+                                                sx={{ 
+                                                    '&:last-child td, &:last-child th': { border: 0 },
+                                                    cursor: 'pointer',
+                                                    backgroundColor: isSelected ? 'rgba(0, 0, 0, 0.04)' : 'inherit',
+                                                    '&:hover': {
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                                                    }
+                                                }}
+                                                onClick = {(event) => handleClick(event, row.externalId)}
+                                                hover
+                                                selected={isSelected}
+                                            >
+                                                <TableCell align="right">{row.externalId}</TableCell>
+                                                <TableCell align="right">{row.usable}</TableCell>
+                                                <TableCell align="right">{row.available}</TableCell>
+                                                <TableCell align="right">{row.rating}</TableCell>
+                                            </TableRow>
+                                        );
+                                    }
+                                    )}
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -266,6 +295,30 @@ const BikesActions = () => {
                     />
                 </Box>
             </Grid>
+            { !hiddenSelectedBikeActions &&
+            <Grid item xs={12}>
+                <Box
+                    boxShadow={3} 
+                    bgcolor="background.paper" 
+                    p={3}
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Typography> Selected bike: {selectedBike}</Typography>
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <Button variant="contained">Delete Bike</Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                         <Button variant="contained">Repair Bike</Button>    
+                        </Grid>
+                        <Grid item xs={4}>
+                         <Button variant="contained">Make Unusable</Button>    
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Grid>
+            }
         </Grid>
     )
 }
