@@ -70,7 +70,7 @@ const StartRide = () => {
         }
     };
 
-    useEffect(() => { //TODO: Modify to hide the page after a ride has started
+    useEffect(() => { 
         let unmounted = false;
         
         UserDetailsService().then((response) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ToggleButton, Box, Grid, TextField, Typography, Button, Accordion, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel, TablePagination } from "@mui/material";
+import { ToggleButton, Box, Grid, TextField, Typography, Button, Accordion, AccordionSummary, AccordionDetails, Checkbox, FormControlLabel, TablePagination, Select, FormControl, InputLabel, MenuItem } from "@mui/material";
 import { FilterAlt } from "@mui/icons-material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FetchBikesData from "../../../api/admin/dashboard/FetchBikesData";
@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import Paper from '@mui/material/Paper';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+import FetchStationsService from "../../../api/admin/actions/FetchAllStations";
 
 
 const BikesActions = () => {
@@ -29,7 +30,9 @@ const BikesActions = () => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+    const [chosenStation, setChosenStation] = useState("");
+    const [hostStationData, setHostStationData] = useState([]);
+
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
     };
@@ -38,6 +41,10 @@ const BikesActions = () => {
       setRowsPerPage(+event.target.value);
       setPage(0);
     };
+
+    useEffect(() => {
+        getStations();
+    }, [])
 
     useEffect(() => {
         async function fetchData() {
@@ -58,6 +65,27 @@ const BikesActions = () => {
         }
     }, [filters])
     
+    const getStations = async () => {
+            await FetchStationsService().then((response) => {
+                let arr = [];
+                if (response.data.length > 0) {
+                    let stations = response.data;
+                    for (const iterator of stations) {
+                        let temp = {
+                            name: iterator.name,
+                        };
+                        
+                        arr.push(temp);
+                    }
+                    setHostStationData(arr);
+                }
+            }).catch((err) => {
+                let arr = [];
+                setHostStationData(arr);
+            })
+    };
+
+
     function validateFilters() {
         const errors = {}
         
@@ -83,8 +111,22 @@ const BikesActions = () => {
                 response.data[i].available.toString(),
                 response.data[i].rating));
         }
-        console.log(arr);
         setRows(arr);
+    }
+
+    const menuItemsStations = hostStationData.map((item) => (
+        <MenuItem key={item.name} value={item.name}> {item.name} </MenuItem>
+    ));
+
+    const handleChange = (event) => {
+        if(event.target.value === "No selection") {
+            setChosenStation("");
+            setFilters({ ...filters, hostStation: ""});
+        }
+        else {
+            setChosenStation(event.target.value);        
+            setFilters({ ...filters, hostStation: event.target.value});
+        }
     }
 
     return (
@@ -121,21 +163,19 @@ const BikesActions = () => {
                                         </TextField>
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <TextField
-                                                //TODO: replace with a dropdown menu
-                                                margin="normal"
-                                                fullWidth
-                                                id="host-station-filter"
+                                        <FormControl sx={{ p: 2, minWidth: 250 }}>
+                                        <InputLabel id="host-station-filter">Host station</InputLabel>
+                                            <Select
+                                                labelId="host-station-filter"
+                                                id="chosen-station"
+                                                value={chosenStation}
+                                                onChange={handleChange}
                                                 label="Host station"
-                                                name="host-station"
-                                                autoComplete="host-station"
-                                                autoFocus
-                                                value={filters.hostStation}
-                                                onChange={(e) => setFilters({ ...filters, hostStation: e.target.value })}
-                                                error = {filtersErrors.bool_host_station_error}
-                                                helperText={filtersErrors.host_station_error} 
-                                        >   
-                                        </TextField>
+                                                >
+                                                <MenuItem key={"No selection"} value={"No selection"}> {"No selection"} </MenuItem>
+                                                {menuItemsStations}
+                                            </Select>
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs = {6}>
                                         <Grid container p={1}>
