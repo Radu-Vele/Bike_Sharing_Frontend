@@ -12,6 +12,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import FetchStationsService from "../../../api/admin/actions/FetchAllStations";
 import DeleteBikeService from "../../../api/admin/actions/DeleteBikeService";
+import RepairBikeService from "../../../api/admin/actions/RepairBikeService";
 
 
 const BikesActions = () => {
@@ -148,14 +149,34 @@ const BikesActions = () => {
         await DeleteBikeService(selectedBike).then((response) => {
             if (response.status === 200) {
                 setSelectedBike(-1);
+                setHiddenSelectedBikeActions(true);
                 setReRenderTable(!reRenderTable);
+                // TODO: show success message
             }
             else {
-                // show error
+                // show error message
             }
         }).catch((err) => {
             
         })
+    }
+
+    const handleRepair = async () => {
+        await RepairBikeService(selectedBike).then((response) => {
+            if (response.status === 200) {
+                setReRenderTable(!reRenderTable);
+                // TODO: show success message
+            }
+            else {
+                // show error message
+            }
+        }).catch((err) => {
+            
+        })
+    }
+
+    const handleMarkAsBroken = async () => {
+        
     }
 
     return (
@@ -331,10 +352,19 @@ const BikesActions = () => {
                             </Button>
                         </Grid>
                         <Grid item xs={4}>
-                         <Button variant="contained">Repair Bike</Button>    
+                            <Button 
+                                variant="contained"
+                                onClick={handleRepair}
+                            >Repair Bike
+                            </Button>    
                         </Grid>
                         <Grid item xs={4}>
-                         <Button variant="contained">Make Unusable</Button>    
+                            <Button 
+                                variant="contained"
+                                onClick={handleMarkAsBroken}
+                            >
+                                Make Unusable
+                            </Button>    
                         </Grid>
                     </Grid>
                 </Box>
