@@ -13,6 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import FetchStationsService from "../../../api/admin/actions/FetchAllStations";
 import DeleteBikeService from "../../../api/admin/actions/DeleteBikeService";
 import RepairBikeService from "../../../api/admin/actions/RepairBikeService";
+import BreakBikeService from "../../../api/admin/actions/BreakBikeService";
 
 
 const BikesActions = () => {
@@ -65,6 +66,8 @@ const BikesActions = () => {
 
         const errors = validateFilters();
         setFiltersErrors(errors);
+        setSelectedBike(-1);
+        setHiddenSelectedBikeActions(true);
         if(Object.keys(errors).length === 0) {
             fetchData();
         }
@@ -146,6 +149,9 @@ const BikesActions = () => {
     }
 
     const handleDelete = async () => {
+        if (selectedBike === -1) {
+            return;
+        }
         await DeleteBikeService(selectedBike).then((response) => {
             if (response.status === 200) {
                 setSelectedBike(-1);
@@ -162,6 +168,9 @@ const BikesActions = () => {
     }
 
     const handleRepair = async () => {
+        if (selectedBike === -1) {
+            return;
+        }
         await RepairBikeService(selectedBike).then((response) => {
             if (response.status === 200) {
                 setReRenderTable(!reRenderTable);
@@ -177,6 +186,20 @@ const BikesActions = () => {
 
     const handleMarkAsBroken = async () => {
         
+        if (selectedBike === -1) {
+            return;
+        }
+        await BreakBikeService(selectedBike).then((response) => {
+            if (response.status === 200) {
+                setReRenderTable(!reRenderTable);
+                // TODO: show success message
+            }
+            else {
+                // show error message
+            }
+        }).catch((err) => {
+            
+        })
     }
 
     return (
