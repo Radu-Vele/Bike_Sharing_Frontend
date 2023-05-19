@@ -11,6 +11,7 @@ import Paper from '@mui/material/Paper';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import FetchStationsService from "../../../api/admin/actions/FetchAllStations";
+import DeleteBikeService from "../../../api/admin/actions/DeleteBikeService";
 
 
 const BikesActions = () => {
@@ -34,6 +35,7 @@ const BikesActions = () => {
     const [hostStationData, setHostStationData] = useState([]);
     const [selectedBike, setSelectedBike] = useState(-1);
     const [hiddenSelectedBikeActions, setHiddenSelectedBikeActions] = useState(true);
+    const [reRenderTable, setReRenderTable] = useState(false);
 
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
@@ -65,7 +67,7 @@ const BikesActions = () => {
         if(Object.keys(errors).length === 0) {
             fetchData();
         }
-    }, [filters])
+    }, [filters, reRenderTable])
     
     const getStations = async () => {
             await FetchStationsService().then((response) => {
@@ -140,6 +142,20 @@ const BikesActions = () => {
             setSelectedBike(externalId);
             setHiddenSelectedBikeActions(false);
         }
+    }
+
+    const handleDelete = async () => {
+        await DeleteBikeService(selectedBike).then((response) => {
+            if (response.status === 200) {
+                setSelectedBike(-1);
+                setReRenderTable(!reRenderTable);
+            }
+            else {
+                // show error
+            }
+        }).catch((err) => {
+            
+        })
     }
 
     return (
@@ -307,7 +323,12 @@ const BikesActions = () => {
                     <Typography> Selected bike: {selectedBike}</Typography>
                     <Grid container>
                         <Grid item xs={4}>
-                            <Button variant="contained">Delete Bike</Button>
+                            <Button 
+                                variant="contained"
+                                onClick={handleDelete}
+                            >
+                                Delete Bike
+                            </Button>
                         </Grid>
                         <Grid item xs={4}>
                          <Button variant="contained">Repair Bike</Button>    
