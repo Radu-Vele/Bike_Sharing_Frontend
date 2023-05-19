@@ -116,7 +116,7 @@ const BikesActions = () => {
         for(let i = 0; i < response.data.length; i++) {
             arr.push(createBikeEntry(response.data[i].externalId,
                 response.data[i].usable.toString(),
-                response.data[i].available.toString(),
+                (!response.data[i].available).toString(),
                 response.data[i].rating));
         }
         setRows(arr);
@@ -307,7 +307,7 @@ const BikesActions = () => {
                                 <TableRow>
                                 <TableCell align="right">External ID</TableCell>
                                 <TableCell align="right">Usable</TableCell>
-                                <TableCell align="right">Available</TableCell>
+                                <TableCell align="right">In a ride a.t.m.</TableCell>
                                 <TableCell align="right">Rating</TableCell>
                                 </TableRow>
                             </TableHead>

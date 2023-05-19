@@ -15,7 +15,7 @@ const RidesChart = () => {
     startMonth: 3,
     startDay: 1,
     endYear: 2023,
-    endMonth: 4,
+    endMonth: 6,
     endDay: 30,
   });
 
